@@ -178,11 +178,25 @@ export const api = {
     return request<{ logs: AttendanceLog[] }>('/api/logs');
   },
 
-  // Settings & Reset
+  // Settings, Reset & Account Management
   async resetSyllabus(): Promise<{ success: boolean; message: string }> {
     return request<{ success: boolean; message: string }>('/api/reset-syllabus', {
       method: 'POST',
     });
+  },
+
+  async clearUserData(): Promise<{ success: boolean; message: string }> {
+    return request<{ success: boolean; message: string }>('/api/user/data', {
+      method: 'DELETE',
+    });
+  },
+
+  async deleteAccount(): Promise<{ success: boolean; message: string }> {
+    const res = await request<{ success: boolean; message: string }>('/api/user/account', {
+      method: 'DELETE',
+    });
+    setStoredToken(null);
+    return res;
   },
 
   async exportData(): Promise<any> {

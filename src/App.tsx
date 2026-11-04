@@ -28,6 +28,7 @@ export default function App() {
   const [loaderVisible, setLoaderVisible] = useState<boolean>(true);
   const [loaderMsg, setLoaderMsg] = useState<string>('Loading attendance registers & safe bunk matrices...');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [initialAuthSignUp, setInitialAuthSignUp] = useState<boolean>(false);
 
   // Modals
   const [subjectModalOpen, setSubjectModalOpen] = useState(false);
@@ -113,6 +114,7 @@ export default function App() {
 
   const handleLoginSuccess = async (loggedInUser: UserProfile) => {
     setUser(loggedInUser);
+    setInitialAuthSignUp(false);
     triggerPencilRefresh('Loading your personal registers...', 600);
     await loadUserData();
   };
@@ -122,7 +124,31 @@ export default function App() {
     setUser(null);
     setSubjects([]);
     setSchedule([]);
+    setInitialAuthSignUp(false);
     showToast('Logged out of logbook.');
+  };
+
+  const handleRegisterNewAccount = () => {
+    api.logout();
+    setUser(null);
+    setSubjects([]);
+    setSchedule([]);
+    setInitialAuthSignUp(true);
+    showToast('Create a new student profile.');
+  };
+
+  const handleWipeData = () => {
+    setSubjects([]);
+    setSchedule([]);
+    showToast('All your attendance records and timetable have been reset.');
+  };
+
+  const handleDeleteAccount = () => {
+    setUser(null);
+    setSubjects([]);
+    setSchedule([]);
+    setInitialAuthSignUp(true);
+    showToast('Account permanently deleted. You can register a new account now.');
   };
 
   // Subject actions
@@ -219,6 +245,7 @@ export default function App() {
           onShowToast={showToast}
           darkMode={darkMode}
           onToggleTheme={handleToggleTheme}
+          initialIsSignUp={initialAuthSignUp}
         />
       ) : (
         <div className="flex-1 flex flex-col w-full">
@@ -316,6 +343,9 @@ export default function App() {
                   setUser((prev) => (prev ? { ...prev, course: newCourse } : prev))
                 }
                 onResetSyllabus={loadUserData}
+                onClearUserData={handleWipeData}
+                onDeleteAccount={handleDeleteAccount}
+                onRegisterNewAccount={handleRegisterNewAccount}
                 onLogout={handleLogout}
                 onShowToast={showToast}
                 onDataImported={loadUserData}

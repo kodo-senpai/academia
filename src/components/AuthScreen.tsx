@@ -9,6 +9,7 @@ interface AuthScreenProps {
   onShowToast: (msg: string) => void;
   darkMode: boolean;
   onToggleTheme: (isDark: boolean) => void;
+  initialIsSignUp?: boolean;
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({
@@ -16,8 +17,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   onShowToast,
   darkMode,
   onToggleTheme,
+  initialIsSignUp = false,
 }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [rollNumber, setRollNumber] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +29,10 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [shake, setShake] = useState(false);
+
+  React.useEffect(() => {
+    setIsSignUp(initialIsSignUp);
+  }, [initialIsSignUp]);
 
   const triggerShake = (msg: string) => {
     setErrorMsg(msg);

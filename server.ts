@@ -482,7 +482,7 @@ app.get('/api/logs', requireAuth, (req: AuthenticatedRequest, res) => {
 // SETTINGS, BACKUP, EXPORT & RESET
 // ==========================================
 
-// Reset or load default BCA AI-DS syllabus for this student
+// Reset or load default BCA syllabus for this student
 app.post('/api/reset-syllabus', requireAuth, (req: AuthenticatedRequest, res) => {
   try {
     const userId = req.user!.id;
@@ -493,9 +493,49 @@ app.post('/api/reset-syllabus', requireAuth, (req: AuthenticatedRequest, res) =>
     db.prepare('DELETE FROM attendance_logs WHERE user_id = ?').run(userId);
 
     seedDefaultSyllabusForUser(userId);
-    res.json({ success: true, message: 'Syllabus reset to default BCA AI-DS curriculum!' });
+    res.json({ success: true, message: 'Sample curriculum template loaded!' });
   } catch (error: any) {
     res.status(500).json({ error: 'Failed to reset syllabus: ' + error.message });
+  }
+});
+
+// Wipe all attendance registers, timetable, and logs for the authenticated student (leaves account active)
+app.delete('/api/user/data', requireAuth, (req: AuthenticatedRequest, res) => {
+  try {
+    const userId = req.user!.id;
+
+    db.prepare('DELETE FROM attendance_logs WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM schedule WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM subjects WHERE user_id = ?').run(userId);
+
+    res.json({
+      success: true,
+      message: 'All your subjects, timetable routine, and attendance records have been cleared.',
+    });
+  } catch (error: any) {
+    console.error('Wipe data error:', error);
+    res.status(500).json({ error: 'Failed to wipe data: ' + error.message });
+  }
+});
+
+// Permanently delete student account and all isolated data from database
+app.delete('/api/user/account', requireAuth, (req: AuthenticatedRequest, res) => {
+  try {
+    const userId = req.user!.id;
+
+    // Delete in reverse foreign key order to ensure cleanliness
+    db.prepare('DELETE FROM attendance_logs WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM schedule WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM subjects WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM profiles WHERE id = ?').run(userId);
+
+    res.json({
+      success: true,
+      message: 'Your account and all records have been permanently deleted from the database.',
+    });
+  } catch (error: any) {
+    console.error('Delete account error:', error);
+    res.status(500).json({ error: 'Failed to delete account: ' + error.message });
   }
 });
 

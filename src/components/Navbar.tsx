@@ -49,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 ACADEMIA
               </span>
               <span className="text-[9px] uppercase font-black bg-accentGold text-black px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000]">
-                {user.course || 'BCA AI-DS'}
+                {user.course || 'Student'}
               </span>
             </div>
             <p className="text-[11px] text-beige-500 dark:text-gray-400 font-semibold truncate max-w-[180px] sm:max-w-none">

@@ -99,7 +99,7 @@ export const BunkManagerView: React.FC<BunkManagerViewProps> = ({
                       <td className="py-3 px-3">
                         <div className="font-bold text-beige-900 dark:text-white">{subj.name}</div>
                         <div className="text-[10px] text-beige-500 dark:text-gray-400 uppercase font-semibold">
-                          {subj.code || 'BCA'} &bull; {subj.type}
+                          {subj.code ? `${subj.code} • ` : ''}{subj.type}
                         </div>
                       </td>
                       <td className="py-3 px-3 text-center font-mono font-bold">

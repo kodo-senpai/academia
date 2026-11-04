@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { IsometricInput } from './IsometricInput';
+import { Bb8Toggle } from './Bb8Toggle';
 import { api } from '../services/api';
 import { UserProfile } from '../types';
 
 interface AuthScreenProps {
   onSuccess: (user: UserProfile) => void;
   onShowToast: (msg: string) => void;
+  darkMode: boolean;
+  onToggleTheme: (isDark: boolean) => void;
 }
 
-export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }) => {
+export const AuthScreen: React.FC<AuthScreenProps> = ({
+  onSuccess,
+  onShowToast,
+  darkMode,
+  onToggleTheme,
+}) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [rollNumber, setRollNumber] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [course, setCourse] = useState('BCA AI-DS');
-  const [loadDefault, setLoadDefault] = useState(true);
+  const [course, setCourse] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -25,13 +32,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
     setErrorMsg(msg);
     setShake(true);
     setTimeout(() => setShake(false), 450);
-  };
-
-  const handleDemoFill = () => {
-    setIsSignUp(false);
-    setRollNumber('115652');
-    setPassword('priyanshu01');
-    setErrorMsg('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +51,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
           full_name: fullName.trim(),
           password,
           course: course.trim(),
-          load_default_syllabus: loadDefault,
         });
         onShowToast(`Welcome, ${res.user.full_name}! Account created.`);
         onSuccess(res.user);
@@ -82,7 +81,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
   };
 
   return (
-    <div className="fixed inset-0 z-40 bg-[#F8F5EE] dark:bg-[#0B0F17] flex items-center justify-center p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-40 bg-[#F8F5EE] dark:bg-[#0B0F17] flex items-center justify-center p-4 overflow-y-auto transition-colors duration-300">
+      {/* Top Floating Dark Mode Toggle */}
+      <div className="absolute top-5 right-5 z-50">
+        <Bb8Toggle darkMode={darkMode} onToggle={onToggleTheme} />
+      </div>
+
       <div
         className={`w-full max-w-md bg-white dark:bg-[#131926] p-6 sm:p-8 rounded-2xl border-4 border-black dark:border-[#E9B50B] shadow-[10px_10px_0px_#000] dark:shadow-[10px_10px_0px_rgba(233,181,11,0.7)] space-y-6 my-auto transition-transform ${
           shake ? 'auth-shake' : ''
@@ -98,7 +102,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
               Academia Portal
             </h2>
             <p className="text-xs font-bold text-[#D97706] dark:text-[#E9B50B]">
-              BCA &bull; Artificial Intelligence & Data Science
+              Universal Student Attendance &amp; Bunk OS
             </p>
           </div>
         </div>
@@ -135,29 +139,13 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
           </button>
         </div>
 
-        {/* Quick Demo Preload */}
-        {!isSignUp && (
-          <div className="flex items-center justify-between p-2.5 bg-accentGold/15 border-2 border-dashed border-black/30 dark:border-accentGold/50 rounded-xl text-[11px]">
-            <span className="font-semibold text-beige-800 dark:text-gray-200">
-              Demo: <b className="font-mono">115652</b> / <b className="font-mono">priyanshu01</b>
-            </span>
-            <button
-              type="button"
-              onClick={handleDemoFill}
-              className="px-2.5 py-1 bg-accentGold text-black font-extrabold rounded-lg border border-black shadow-[1px_1px_0px_#000] hover:bg-accentGold-light active:scale-95 transition-all"
-            >
-              Autofill
-            </button>
-          </div>
-        )}
-
         {/* Auth Form with 3D Inputs */}
         <form onSubmit={handleSubmit} className="space-y-5 pt-1">
           <IsometricInput
             label="STUDENT ROLL / ID"
             value={rollNumber}
             onChange={(e) => setRollNumber(e.target.value)}
-            placeholder="e.g. 115652"
+            placeholder="Enter Student Roll Number"
             required
             autoComplete="username"
             icon={
@@ -174,17 +162,17 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
                 label="FULL NAME"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Priyanshu Sharma"
+                placeholder="Enter Full Name"
                 required
                 autoComplete="name"
                 icon={<i className="fa-solid fa-id-card text-black text-sm"></i>}
               />
 
               <IsometricInput
-                label="PROGRAM / COURSE"
+                label="PROGRAM / COURSE NAME"
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
-                placeholder="BCA AI-DS"
+                placeholder="e.g. B.Tech, BCA, BBA, B.Com, MBA..."
                 required
                 icon={<i className="fa-solid fa-book-bookmark text-black text-sm"></i>}
               />
@@ -218,20 +206,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onSuccess, onShowToast }
               autoComplete="new-password"
               icon={<i className="fa-solid fa-shield-check text-black text-sm"></i>}
             />
-          )}
-
-          {isSignUp && (
-            <label className="flex items-start gap-2.5 text-xs text-beige-700 dark:text-gray-300 font-medium cursor-pointer">
-              <input
-                type="checkbox"
-                checked={loadDefault}
-                onChange={(e) => setLoadDefault(e.target.checked)}
-                className="mt-0.5 accent-accentGold w-4 h-4 rounded"
-              />
-              <span>
-                Pre-load default <b>BCA AI-DS semester syllabus</b> and routine timetable into my account.
-              </span>
-            </label>
           )}
 
           {errorMsg && (

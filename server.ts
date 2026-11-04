@@ -67,10 +67,7 @@ app.post('/api/auth/register', (req, res) => {
       VALUES (?, ?, ?, ?, ?, 75, ?, ?)
     `).run(userId, trimmedRoll, trimmedName, hash, studentCourse, now, now);
 
-    // Optionally seed default syllabus
-    if (load_default_syllabus !== false) {
-      seedDefaultSyllabusForUser(userId);
-    }
+    // New students start with 0 preloaded subjects (clean slate)
 
     const user = {
       id: userId,

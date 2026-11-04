@@ -21,8 +21,12 @@ export const PredictorView: React.FC<PredictorViewProps> = ({ subjects, globalTa
 
   if (!currentSubj) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-darkBg-card rounded-2xl border-2 border-black">
-        <p className="font-bold">Please add subjects first to simulate future attendance.</p>
+      <div className="p-10 text-center bg-white dark:bg-darkBg-card rounded-2xl border-2 border-dashed border-black/20 dark:border-gray-700 shadow-brutal space-y-3">
+        <i className="fa-solid fa-wand-magic-sparkles text-3xl text-accentGold"></i>
+        <h3 className="font-display font-bold text-base text-beige-900 dark:text-white">No Subjects to Simulate Yet</h3>
+        <p className="text-xs text-beige-600 dark:text-gray-400 max-w-sm mx-auto">
+          Add your semester subjects from the Dashboard first to test what-if attendance scenarios.
+        </p>
       </div>
     );
   }

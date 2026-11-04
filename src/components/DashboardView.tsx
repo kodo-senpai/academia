@@ -39,7 +39,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-black/10 dark:border-gray-800 pb-4 gap-2">
         <div>
           <span className="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">
-            {user.course || 'BCA AI-DS'} Cockpit
+            {user.course || 'Student'} Cockpit
           </span>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">
             Attendance Overview
@@ -174,15 +174,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {filteredSubjects.length === 0 ? (
-          <div className="p-8 text-center bg-white dark:bg-darkBg-card rounded-2xl border-2 border-dashed border-black/20 dark:border-gray-700 space-y-3">
-            <i className="fa-solid fa-book-open text-3xl text-beige-400"></i>
-            <p className="font-bold text-sm text-beige-800 dark:text-gray-200">
-              {searchQuery ? `No subjects match "${searchQuery}"` : 'No subjects added yet.'}
-            </p>
-            {!searchQuery && (
-              <p className="text-xs text-beige-500">
-                Click "+ New Subject" above or go to Settings to load the default BCA AI-DS syllabus.
+          <div className="p-10 text-center bg-white dark:bg-darkBg-card rounded-2xl border-2 border-dashed border-black/20 dark:border-gray-700 space-y-4 shadow-brutal">
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-accentGold/20 text-black dark:text-accentGold flex items-center justify-center text-2xl border-2 border-black shadow-brutal-sm">
+              <i className="fa-solid fa-folder-plus"></i>
+            </div>
+            <div>
+              <p className="font-display font-bold text-base text-beige-900 dark:text-white">
+                {searchQuery ? `No subjects match "${searchQuery}"` : 'Your Logbook is Ready — 0 Subjects Added'}
               </p>
+              <p className="text-xs text-beige-600 dark:text-gray-400 mt-1 max-w-md mx-auto">
+                {searchQuery
+                  ? 'Try searching with another subject code or name.'
+                  : 'Start tracking your attendance by adding your subjects, or head to Settings if you would like to load a sample syllabus template.'}
+              </p>
+            </div>
+            {!searchQuery && (
+              <div className="flex items-center justify-center gap-3 pt-2">
+                <button
+                  onClick={onOpenAddModal}
+                  className="px-4 py-2.5 bg-accentGold text-black font-extrabold text-xs rounded-xl border-2 border-black shadow-brutal-sm hover:bg-accentGold-light active:translate-y-0.5 transition-all"
+                >
+                  <i className="fa-solid fa-plus mr-1.5"></i> Add First Subject
+                </button>
+              </div>
             )}
           </div>
         ) : (
@@ -210,7 +224,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             </span>
                           )}
                           <span className="text-[10px] font-extrabold text-beige-500 dark:text-gray-400 uppercase">
-                            {subj.code || 'BCA'}
+                            {subj.code || user.course || 'MODULE'}
                           </span>
                         </div>
                         <h4 className="font-display text-base font-bold text-beige-900 dark:text-white leading-snug">

@@ -8,10 +8,11 @@ interface Bb8ToggleProps {
 export const Bb8Toggle: React.FC<Bb8ToggleProps> = ({ darkMode, onToggle }) => {
   return (
     <div
-      className="p-1.5 rounded-xl bg-white dark:bg-[#131926] border-2 border-black dark:border-gray-700 shadow-[2px_2px_0px_#111111] flex items-center"
-      title="Toggle BB-8 Day/Night Mode"
+      className="p-1.5 rounded-xl bg-white dark:bg-[#131926] border-2 border-black dark:border-gray-700 shadow-[2px_2px_0px_#111111] flex items-center cursor-pointer select-none transition-colors"
+      title={darkMode ? "Switch to Day Mode (Light)" : "Switch to Night Mode (Dark)"}
+      onClick={() => onToggle(!darkMode)}
     >
-      <label className="bb8-toggle">
+      <label className="bb8-toggle" onClick={(e) => e.stopPropagation()}>
         <input
           className="bb8-toggle__checkbox"
           type="checkbox"

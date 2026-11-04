@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-beige-50: #FAF8F5;
@@ -80,8 +81,11 @@ body {
 }
 
 .bb8-toggle__checkbox {
-  appearance: none;
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
 .bb8-toggle__container {

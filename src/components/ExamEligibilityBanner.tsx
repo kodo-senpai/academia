@@ -54,11 +54,11 @@ export const ExamEligibilityBanner: React.FC<ExamEligibilityBannerProps> = ({
               </>
             ) : subjects.length > 0 ? (
               <>
-                <span className="font-bold text-olive">All clear!</span> Overall BCA attendance is{' '}
+                <span className="font-bold text-olive">All clear!</span> Overall attendance is{' '}
                 <b>{overallPct}%</b>. You have a total buffer of <b>{totalSafeBunks} safe bunks</b> across your modules.
               </>
             ) : (
-              'No subjects registered yet. Add your first subject or load default BCA syllabus.'
+              'No subjects registered yet. Click "+ New Subject" to add your semester courses.'
             )}
           </p>
         </div>

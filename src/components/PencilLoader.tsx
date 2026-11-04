@@ -68,7 +68,7 @@ export const PencilLoader: React.FC<PencilLoaderProps> = ({
 
         <div className="space-y-1 mt-2">
           <h2 className="font-display text-2xl font-black tracking-tight text-beige-900 dark:text-accentGold">
-            ACADEMIA BCA AI-DS
+            ACADEMIA ATTENDANCE OS
           </h2>
           <p className="text-xs font-bold uppercase tracking-widest text-beige-600 dark:text-gray-400">
             {message}

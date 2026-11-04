@@ -24,7 +24,7 @@ export function initDatabase() {
       roll_number TEXT UNIQUE NOT NULL,
       full_name TEXT NOT NULL,
       password_hash TEXT NOT NULL,
-      course TEXT DEFAULT 'BCA AI-DS',
+      course TEXT DEFAULT 'Student',
       global_target INTEGER DEFAULT 75,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
@@ -74,22 +74,6 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_schedule_user ON schedule(user_id);
     CREATE INDEX IF NOT EXISTS idx_logs_user ON attendance_logs(user_id);
   `);
-
-  // Seed default account (Roll: 115652 / priyanshu01) if not present
-  const checkUser = db.prepare('SELECT id FROM profiles WHERE roll_number = ?').get('115652') as { id: string } | undefined;
-  if (!checkUser) {
-    const userId = crypto.randomUUID();
-    const now = new Date().toISOString();
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('priyanshu01', salt);
-
-    db.prepare(`
-      INSERT INTO profiles (id, roll_number, full_name, password_hash, course, global_target, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(userId, '115652', 'Priyanshu (Demo Student)', hash, 'BCA AI-DS', 75, now, now);
-
-    seedDefaultSyllabusForUser(userId);
-  }
 }
 
 export const DEFAULT_BCA_SYLLABUS = [

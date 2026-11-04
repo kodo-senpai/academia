@@ -89,7 +89,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
             >
               {subjects.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name} ({s.code || 'BCA'})
+                  {s.name}{s.code ? ` (${s.code})` : ''}
                 </option>
               ))}
             </select>

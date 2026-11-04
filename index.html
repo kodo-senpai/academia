@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Academia — BCA AI-DS Attendance & Bunk OS</title>
-    <meta name="description" content="Production multi-user attendance management, safe bunk calculator, and timetable system for BCA AI-DS students." />
-    <meta property="og:title" content="Academia — BCA AI-DS Attendance & Bunk OS" />
-    <meta property="og:description" content="Production multi-user attendance management, safe bunk calculator, and timetable system for BCA AI-DS students." />
+    <title>Academia — Student Attendance & Bunk OS</title>
+    <meta name="description" content="Production multi-user attendance management, safe bunk calculator, and timetable system for students of any college or course." />
+    <meta property="og:title" content="Academia — Student Attendance & Bunk OS" />
+    <meta property="og:description" content="Production multi-user attendance management, safe bunk calculator, and timetable system for students of any college or course." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
 
@@ -17,6 +17,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Instant Dark Mode Init Script -->
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('academia_theme');
+          if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body class="bg-[#F8F5EE] dark:bg-[#0B0F17] text-[#231F1C] dark:text-gray-100 antialiased min-h-screen">
     <div id="root"></div>

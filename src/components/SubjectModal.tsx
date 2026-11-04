@@ -77,7 +77,7 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
       <div className="bg-[#F8F5EE] dark:bg-darkBg-card border-3 border-black w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-brutal-lg">
         <div className="flex justify-between items-center border-b-2 border-black/10 dark:border-gray-700 pb-3">
           <h3 className="font-display text-xl font-bold text-beige-900 dark:text-white">
-            {initialSubject ? 'Edit Subject Module' : 'Add New BCA Subject'}
+            {initialSubject ? 'Edit Subject Module' : 'Add New Subject'}
           </h3>
           <button
             onClick={onClose}
@@ -89,10 +89,10 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <IsometricInput
-            label="BCA MODULE TITLE"
+            label="SUBJECT / MODULE TITLE"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Computer Organization"
+            placeholder="e.g. Data Structures, Accounting, Marketing..."
             required
             icon={
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -105,13 +105,13 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <label className="block font-bold text-beige-700 dark:text-gray-300 mb-1">
-                Course Code
+                Subject Code (Optional)
               </label>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="BCA-101"
+                placeholder="e.g. CS101, MGT201"
                 className="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-bold outline-none"
               />
             </div>

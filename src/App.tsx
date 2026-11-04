@@ -72,8 +72,10 @@ export default function App() {
     setDarkMode(isDark);
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
     }
 
     const token = getStoredToken();
@@ -101,8 +103,10 @@ export default function App() {
     localStorage.setItem('academia_theme', isDark ? 'dark' : 'light');
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
     }
     showToast(isDark ? 'Night Mode Active 🌙' : 'Day Mode Active ☀️');
   };
@@ -210,7 +214,12 @@ export default function App() {
 
       {/* Auth Screen Overlay if not logged in */}
       {!user ? (
-        <AuthScreen onSuccess={handleLoginSuccess} onShowToast={showToast} />
+        <AuthScreen
+          onSuccess={handleLoginSuccess}
+          onShowToast={showToast}
+          darkMode={darkMode}
+          onToggleTheme={handleToggleTheme}
+        />
       ) : (
         <div className="flex-1 flex flex-col w-full">
           {/* Header & Navigation with BB-8 toggle */}
@@ -229,10 +238,10 @@ export default function App() {
             {/* 3D Isometric Search & Filter Bar */}
             <div className="w-full">
               <IsometricInput
-                label="BCA AI-DS SUBJECT SEARCH & FILTER"
+                label="SUBJECT SEARCH & FILTER"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search BCA subjects: Java, Web Dev, IITOA, Math, Labs..."
+                placeholder="Search registered subjects by title or code..."
                 icon={
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M0 0h24v24H0z" fill="none"></path>
@@ -303,6 +312,9 @@ export default function App() {
                 onUpdateTarget={(newTgt) =>
                   setUser((prev) => (prev ? { ...prev, global_target: newTgt } : prev))
                 }
+                onUpdateCourse={(newCourse) =>
+                  setUser((prev) => (prev ? { ...prev, course: newCourse } : prev))
+                }
                 onResetSyllabus={loadUserData}
                 onLogout={handleLogout}
                 onShowToast={showToast}
@@ -315,7 +327,7 @@ export default function App() {
           <footer className="border-t-2 border-black/10 dark:border-gray-800 bg-white/60 dark:bg-darkBg-card py-4 px-4 text-center text-xs text-beige-600 dark:text-gray-400 mt-6">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
               <p className="font-display font-bold text-beige-900 dark:text-white">
-                Academia Bunk OS &bull; BCA AI-DS Edition
+                Academia Bunk OS &bull; Student Edition
               </p>
               <p className="font-medium">
                 Production multi-user architecture &mdash; per-student isolated database with secure authentication.

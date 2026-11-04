@@ -82,7 +82,7 @@ export const AttendanceLogsModal: React.FC<AttendanceLogsModalProps> = ({ isOpen
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-beige-900 dark:text-white">
-                          {log.subjectName || 'BCA Subject'}
+                          {log.subjectName || 'Subject'}
                         </span>
                         <span
                           className={`text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded border ${

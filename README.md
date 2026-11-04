@@ -88,7 +88,7 @@ npm start
 
 When setting up your Web Service on [Render](https://render.com):
 1. **Environment**: `Node`
-2. **Build Command**: `npm install && npm run build`
+2. **Build Command**: `npm install --legacy-peer-deps && npm run build`
 3. **Start Command**: `npm start`
 4. **Environment Variables**:
    - `NODE_ENV`: `production`

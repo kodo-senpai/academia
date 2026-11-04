@@ -1,0 +1,6 @@
+{
+  "name": "Academia — BCA AI-DS Attendance & Bunk OS",
+  "description": "Production multi-user attendance management, safe bunk calculator, and timetable system for BCA AI-DS students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

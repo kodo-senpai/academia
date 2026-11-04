@@ -1,0 +1,2599 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia — BCA AI-DS Attendance & Bunk OS</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            beige: {
+              50: '#FAF8F5',
+              100: '#F5EFE6',
+              200: '#E7DEC8',
+              300: '#D5C5B1',
+              400: '#BDB09E',
+              500: '#8C7A6B',
+              600: '#6E5F52',
+              700: '#52463C',
+              800: '#3A312A',
+              900: '#231F1C',
+            },
+            darkBg: {
+              DEFAULT: '#0B0F17',
+              card: '#131926',
+              border: '#1F293D',
+              muted: '#182132'
+            },
+            accentGold: {
+              DEFAULT: '#E9B50B',
+              light: '#FBBF24',
+              soft: '#FEF3C7',
+              dark: '#D97706'
+            },
+            terracotta: {
+              DEFAULT: '#E05A47',
+              light: '#F87171',
+              dark: '#B91C1C',
+            },
+            olive: {
+              DEFAULT: '#10B981',
+              light: '#34D399',
+              dark: '#059669',
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          },
+          boxShadow: {
+            'brutal': '4px 4px 0px #111111',
+            'brutal-sm': '2px 2px 0px #111111',
+            'brutal-lg': '6px 6px 0px #111111',
+            'brutal-dark': '4px 4px 0px #E9B50B',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ========================================================
+       1. BB-8 DROID TOGGLE COMPONENT (Complete Physics & Motion)
+       ======================================================== */
+    .bb8-toggle {
+      --toggle-size: 6px; /* Scaled seamlessly for header & laptop bar */
+      --toggle-width: 10.625em;
+      --toggle-height: 5.625em;
+      --toggle-offset: calc((var(--toggle-height) - var(--bb8-diameter)) / 2);
+      --toggle-bg: linear-gradient(#2c4770, #070e2b 35%, #628cac 50% 70%, #a6c5d4) no-repeat;
+      --bb8-diameter: 4.375em;
+      --radius: 99em;
+      --transition: 0.4s;
+      --accent: #de7d2f;
+      --bb8-bg: #fff;
+      display: inline-block;
+      user-select: none;
+      vertical-align: middle;
+      flex-shrink: 0;
+      cursor: pointer;
+      font-size: var(--toggle-size);
+    }
+
+    .bb8-toggle,
+    .bb8-toggle *,
+    .bb8-toggle *::before,
+    .bb8-toggle *::after {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    .bb8-toggle__checkbox {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      display: none;
+    }
+
+    .bb8-toggle__container {
+      width: var(--toggle-width);
+      height: var(--toggle-height);
+      background: var(--toggle-bg);
+      background-size: 100% 11.25em;
+      background-position-y: -5.625em;
+      border-radius: var(--radius);
+      position: relative;
+      transition: var(--transition);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+    }
+
+    .bb8 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: calc(var(--toggle-offset) - 1.688em + 0.188em);
+      left: var(--toggle-offset);
+      transition: var(--transition);
+      z-index: 2;
+    }
+
+    .bb8__head-container {
+      position: relative;
+      transition: var(--transition);
+      z-index: 2;
+      transform-origin: 1.25em 3.75em;
+    }
+
+    .bb8__head {
+      overflow: hidden;
+      margin-bottom: -0.188em;
+      width: 2.5em;
+      height: 1.688em;
+      background: linear-gradient(
+          transparent 0.063em,
+          dimgray 0.063em 0.313em,
+          transparent 0.313em 0.375em,
+          var(--accent) 0.375em 0.5em,
+          transparent 0.5em 1.313em,
+          silver 1.313em 1.438em,
+          transparent 1.438em
+        ),
+        linear-gradient(
+          45deg,
+          transparent 0.188em,
+          var(--bb8-bg) 0.188em 1.25em,
+          transparent 1.25em
+        ),
+        linear-gradient(
+          -45deg,
+          transparent 0.188em,
+          var(--bb8-bg) 0.188em 1.25em,
+          transparent 1.25em
+        ),
+        linear-gradient(var(--bb8-bg) 1.25em, transparent 1.25em);
+      border-radius: var(--radius) var(--radius) 0 0;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0.063em 0.125em gray);
+    }
+
+    .bb8__head::before {
+      content: "";
+      position: absolute;
+      width: 0.563em;
+      height: 0.563em;
+      background: radial-gradient(
+          0.125em circle at 0.25em 0.375em,
+          red,
+          transparent
+        ),
+        radial-gradient(
+          0.063em circle at 0.375em 0.188em,
+          var(--bb8-bg) 50%,
+          transparent 100%
+        ),
+        linear-gradient(45deg, #000 0.188em, dimgray 0.313em 0.375em, #000 0.5em);
+      border-radius: var(--radius);
+      top: 0.413em;
+      left: 50%;
+      transform: translate(-50%);
+      box-shadow: 0 0 0 0.089em lightgray, 0.563em 0.281em 0 -0.148em,
+        0.563em 0.281em 0 -0.1em var(--bb8-bg), 0.563em 0.281em 0 -0.063em;
+      z-index: 1;
+      transition: var(--transition);
+    }
+
+    .bb8__head::after {
+      content: "";
+      position: absolute;
+      bottom: 0.375em;
+      left: 0;
+      width: 100%;
+      height: 0.188em;
+      background: linear-gradient(
+        to right,
+        var(--accent) 0.125em,
+        transparent 0.125em 0.188em,
+        var(--accent) 0.188em 0.313em,
+        transparent 0.313em 0.375em,
+        var(--accent) 0.375em 0.938em,
+        transparent 0.938em 1em,
+        var(--accent) 1em 1.125em,
+        transparent 1.125em 1.875em,
+        var(--accent) 1.875em 2em,
+        transparent 2em 2.063em,
+        var(--accent) 2.063em 2.25em,
+        transparent 2.25em 2.313em,
+        var(--accent) 2.313em 2.375em,
+        transparent 2.375em 2.438em,
+        var(--accent) 2.438em
+      );
+      transition: var(--transition);
+    }
+
+    .bb8__antenna {
+      position: absolute;
+      transform: translateY(-90%);
+      width: 0.059em;
+      border-radius: var(--radius) var(--radius) 0 0;
+      transition: var(--transition);
+    }
+
+    .bb8__antenna:nth-child(1) {
+      height: 0.938em;
+      right: 0.938em;
+      background: linear-gradient(#000 0.188em, silver 0.188em);
+    }
+
+    .bb8__antenna:nth-child(2) {
+      height: 0.375em;
+      left: 50%;
+      transform: translate(-50%, -90%);
+      background: silver;
+    }
+
+    .bb8__body {
+      width: 4.375em;
+      height: 4.375em;
+      background: var(--bb8-bg);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      z-index: 1;
+      transform: rotate(45deg);
+      background: linear-gradient(
+          -90deg,
+          var(--bb8-bg) 4%,
+          var(--accent) 4% 10%,
+          transparent 10% 90%,
+          var(--accent) 90% 96%,
+          var(--bb8-bg) 96%
+        ),
+        linear-gradient(
+          var(--bb8-bg) 4%,
+          var(--accent) 4% 10%,
+          transparent 10% 90%,
+          var(--accent) 90% 96%,
+          var(--bb8-bg) 96%
+        ),
+        linear-gradient(
+          to right,
+          transparent 2.156em,
+          silver 2.156em 2.219em,
+          transparent 2.188em
+        ),
+        linear-gradient(
+          transparent 2.156em,
+          silver 2.156em 2.219em,
+          transparent 2.188em
+        );
+      background-color: var(--bb8-bg);
+    }
+
+    .bb8__body::after {
+      content: "";
+      bottom: 1.5em;
+      left: 0.563em;
+      position: absolute;
+      width: 0.188em;
+      height: 0.188em;
+      background: rgb(236, 236, 236);
+      color: rgb(236, 236, 236);
+      border-radius: 50%;
+      box-shadow: 0.875em 0.938em, 0 -1.25em, 0.875em -2.125em,
+        2.125em -2.125em, 3.063em -1.25em, 3.063em 0, 2.125em 0.938em;
+    }
+
+    .bb8__body::before {
+      content: "";
+      width: 2.625em;
+      height: 2.625em;
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0.1;
+      overflow: hidden;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 0.313em solid var(--accent);
+      background: radial-gradient(
+          1em circle at center,
+          rgb(236, 236, 236) 50%,
+          transparent 51%
+        ),
+        radial-gradient(1.25em circle at center, var(--bb8-bg) 50%, transparent 51%),
+        linear-gradient(
+          -90deg,
+          transparent 42%,
+          var(--accent) 42% 58%,
+          transparent 58%
+        ),
+        linear-gradient(var(--bb8-bg) 42%, var(--accent) 42% 58%, var(--bb8-bg) 58%);
+    }
+
+    .artificial__hidden {
+      position: absolute;
+      border-radius: inherit;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bb8__shadow {
+      content: "";
+      width: var(--bb8-diameter);
+      height: 20%;
+      border-radius: 50%;
+      background: #3a271c;
+      box-shadow: 0.313em 0 3.125em #3a271c;
+      opacity: 0.25;
+      position: absolute;
+      bottom: 0;
+      left: calc(var(--toggle-offset) - 0.938em);
+      transition: var(--transition);
+      transform: skew(-70deg);
+      z-index: 1;
+    }
+
+    .bb8-toggle__scenery {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      position: relative;
+      border-radius: inherit;
+    }
+
+    .bb8-toggle__scenery::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 30%;
+      bottom: 0;
+      background: #b18d71;
+      z-index: 1;
+    }
+
+    .bb8-toggle__cloud {
+      z-index: 1;
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .bb8-toggle__cloud:nth-last-child(1) {
+      width: 0.875em;
+      height: 0.625em;
+      filter: blur(0.125em) drop-shadow(0.313em 0.313em #ffffffae)
+        drop-shadow(-0.625em 0 #fff) drop-shadow(-0.938em -0.125em #fff);
+      right: 1.875em;
+      top: 2.813em;
+      background: linear-gradient(to top right, #ffffffae, #ffffffae);
+      transition: var(--transition);
+    }
+
+    .bb8-toggle__cloud:nth-last-child(2) {
+      top: 0.625em;
+      right: 4.375em;
+      width: 0.875em;
+      height: 0.375em;
+      background: #dfdedeae;
+      filter: blur(0.125em) drop-shadow(-0.313em -0.188em #e0dfdfae)
+        drop-shadow(-0.625em -0.188em #bbbbbbae) drop-shadow(-1em 0.063em #cfcfcfae);
+      transition: 0.6s;
+    }
+
+    .bb8-toggle__cloud:nth-last-child(3) {
+      top: 1.25em;
+      right: 0.938em;
+      width: 0.875em;
+      height: 0.375em;
+      background: #ffffffae;
+      filter: blur(0.125em) drop-shadow(0.438em 0.188em #ffffffae)
+        drop-shadow(-0.625em 0.313em #ffffffae);
+      transition: 0.8s;
+    }
+
+    .gomrassen,
+    .hermes,
+    .chenini {
+      position: absolute;
+      border-radius: var(--radius);
+      background: linear-gradient(#fff, #6e8ea2);
+      top: 100%;
+    }
+
+    .gomrassen {
+      left: 0.938em;
+      width: 1.875em;
+      height: 1.875em;
+      box-shadow: 0 0 0.188em #ffffff52, 0 0 0.188em #6e8ea24b;
+      transition: var(--transition);
+    }
+
+    .gomrassen::before,
+    .gomrassen::after {
+      content: "";
+      position: absolute;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0.063em rgb(140, 162, 169);
+      background: rgb(184, 196, 200);
+    }
+
+    .gomrassen::before {
+      left: 0.313em;
+      top: 0.313em;
+      width: 0.438em;
+      height: 0.438em;
+    }
+
+    .gomrassen::after {
+      width: 0.25em;
+      height: 0.25em;
+      left: 1.25em;
+      top: 0.75em;
+    }
+
+    .hermes {
+      left: 3.438em;
+      width: 0.625em;
+      height: 0.625em;
+      box-shadow: 0 0 0.125em #ffffff52, 0 0 0.125em #6e8ea24b;
+      transition: 0.6s;
+    }
+
+    .chenini {
+      left: 4.375em;
+      width: 0.5em;
+      height: 0.5em;
+      box-shadow: 0 0 0.125em #ffffff52, 0 0 0.125em #6e8ea24b;
+      transition: 0.8s;
+    }
+
+    .tatto-1,
+    .tatto-2 {
+      position: absolute;
+      width: 1.25em;
+      height: 1.25em;
+      border-radius: var(--radius);
+    }
+
+    .tatto-1 {
+      background: #fefefe;
+      right: 3.125em;
+      top: 0.625em;
+      box-shadow: 0 0 0.438em #fdf4e1;
+      transition: var(--transition);
+    }
+
+    .tatto-2 {
+      background: linear-gradient(#e6ac5c, #d75449);
+      right: 1.25em;
+      top: 2.188em;
+      box-shadow: 0 0 0.438em #e6ad5c3d, 0 0 0.438em #d755494f;
+      transition: 0.7s;
+    }
+
+    .bb8-toggle__star {
+      position: absolute;
+      width: 0.063em;
+      height: 0.063em;
+      background: #fff;
+      border-radius: var(--radius);
+      filter: drop-shadow(0 0 0.063em #fff);
+      color: #fff;
+      top: 100%;
+    }
+
+    .bb8-toggle__star:nth-child(1) {
+      left: 3.75em;
+      box-shadow: 1.25em 0.938em, -1.25em 2.5em, 0 1.25em, 1.875em 0.625em,
+        -3.125em 1.875em, 1.25em 2.813em;
+      transition: 0.2s;
+    }
+
+    .bb8-toggle__star:nth-child(2) {
+      left: 4.688em;
+      box-shadow: 0.625em 0, 0 0.625em, -0.625em -0.625em, 0.625em 0.938em,
+        -3.125em 1.25em, 1.25em -1.563em;
+      transition: 0.3s;
+    }
+
+    .bb8-toggle__star:nth-child(3) {
+      left: 5.313em;
+      box-shadow: -0.625em -0.625em, -2.188em 1.25em, -2.188em 0,
+        -3.75em -0.625em, -3.125em -0.625em, -2.5em -0.313em, 0.75em -0.625em;
+      transition: var(--transition);
+    }
+
+    .bb8-toggle__star:nth-child(4) {
+      left: 1.875em;
+      width: 0.125em;
+      height: 0.125em;
+      transition: 0.5s;
+    }
+
+    .bb8-toggle__star:nth-child(5) {
+      left: 5em;
+      width: 0.125em;
+      height: 0.125em;
+      transition: 0.6s;
+    }
+
+    .bb8-toggle__star:nth-child(6) {
+      left: 2.5em;
+      width: 0.125em;
+      height: 0.125em;
+      transition: 0.7s;
+    }
+
+    .bb8-toggle__star:nth-child(7) {
+      left: 3.438em;
+      width: 0.125em;
+      height: 0.125em;
+      transition: 0.8s;
+    }
+
+    /* BB-8 ACTIONS & CHECKED STATES */
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(1) { top: 0.625em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(2) { top: 1.875em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(3) { top: 1.25em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(4) { top: 3.438em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(5) { top: 3.438em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(6) { top: 0.313em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__star:nth-child(7) { top: 1.875em; }
+
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8-toggle__cloud { right: -100%; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .gomrassen { top: 0.938em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .hermes { top: 2.5em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .chenini { top: 2.75em; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container { background-position-y: 0; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .tatto-1 { top: 100%; }
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .tatto-2 { top: 100%; }
+
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8 {
+      left: calc(100% - var(--bb8-diameter) - var(--toggle-offset));
+    }
+
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8__shadow {
+      left: calc(100% - var(--bb8-diameter) - var(--toggle-offset) + 0.938em);
+      transform: skew(70deg);
+    }
+
+    .bb8-toggle__checkbox:checked + .bb8-toggle__container .bb8__body {
+      transform: rotate(225deg);
+    }
+
+    .bb8-toggle__checkbox:hover + .bb8-toggle__container .bb8__head::before {
+      left: 100%;
+    }
+
+    .bb8-toggle__checkbox:not(:checked):hover + .bb8-toggle__container .bb8__antenna:nth-child(1) {
+      right: 1.5em;
+    }
+
+    .bb8-toggle__checkbox:hover + .bb8-toggle__container .bb8__antenna:nth-child(2) {
+      left: 0.938em;
+    }
+
+    .bb8-toggle__checkbox:hover + .bb8-toggle__container .bb8__head::after {
+      background-position: 1.375em 0;
+    }
+
+    .bb8-toggle__checkbox:checked:hover + .bb8-toggle__container .bb8__head::before {
+      left: 0;
+    }
+
+    .bb8-toggle__checkbox:checked:hover + .bb8-toggle__container .bb8__antenna:nth-child(2) {
+      left: calc(100% - 0.938em);
+    }
+
+    .bb8-toggle__checkbox:checked:hover + .bb8-toggle__container .bb8__head::after {
+      background-position: -1.375em 0;
+    }
+
+    .bb8-toggle__checkbox:active + .bb8-toggle__container .bb8__head-container {
+      transform: rotate(25deg);
+    }
+
+    .bb8-toggle__checkbox:checked:active + .bb8-toggle__container .bb8__head-container {
+      transform: rotate(-25deg);
+    }
+
+    .bb8:hover .bb8__head::before,
+    .bb8:hover .bb8__antenna:nth-child(2) {
+      left: 50% !important;
+    }
+
+    .bb8:hover .bb8__antenna:nth-child(1) {
+      right: 0.938em !important;
+    }
+
+    .bb8:hover .bb8__head::after {
+      background-position: 0 0 !important;
+    }
+
+    /* ========================================================
+       2. ISOMETRIC 3D NEO-BRUTALIST INPUT COMPONENT (FROM text.txt)
+       ======================================================== */
+    .input-3d-wrapper {
+      perspective: 1200px;
+      width: 100%;
+    }
+
+    .input__container {
+      position: relative;
+      background: #fdfdfd;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 15px;
+      border: 3.5px solid #000;
+      width: 100%;
+      transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+      transform: rotateX(8deg) rotateY(-8deg);
+      box-shadow: 10px 10px 0 #000;
+      border-radius: 4px;
+    }
+
+    .dark .input__container {
+      background: #141c2a;
+      border-color: #E9B50B;
+      box-shadow: 10px 10px 0 #000;
+    }
+
+    .input__container:hover,
+    .input__container:focus-within {
+      transform: rotateX(2deg) rotateY(-2deg) scale(1.02);
+      box-shadow: 20px 20px 0 -4px #E9B50B, 20px 20px 0 0 #000;
+    }
+
+    .shadow__input {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      bottom: 0;
+      z-index: -1;
+      transform: translateZ(-50px);
+      background: linear-gradient(
+        45deg,
+        rgba(233, 181, 11, 0.4) 0%,
+        rgba(224, 90, 71, 0.2) 100%
+      );
+      filter: blur(20px);
+    }
+
+    .input__button__shadow {
+      cursor: pointer;
+      border: 3px solid #000;
+      background: #E9B50B;
+      transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 12px;
+      transform: translateZ(20px);
+      position: relative;
+      z-index: 3;
+      font-weight: bold;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .input__button__shadow:hover {
+      background: #ffd027;
+      transform: translateZ(25px) translateX(-4px) translateY(-4px);
+      box-shadow: 4px 4px 0 0 #000;
+    }
+
+    .input__button__shadow svg {
+      fill: #000;
+      width: 22px;
+      height: 22px;
+    }
+
+    .input__search {
+      width: 100%;
+      outline: none;
+      border: 3px solid #000;
+      padding: 12px 14px;
+      font-size: 15px;
+      background: #fff;
+      color: #000;
+      transform: translateZ(10px);
+      transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      z-index: 3;
+      font-family: "Space Grotesk", sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .dark .input__search {
+      background: #0b0f17;
+      color: #fff;
+      border-color: #31425f;
+    }
+
+    .input__search::placeholder {
+      color: #666;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .dark .input__search::placeholder {
+      color: #8896ab;
+    }
+
+    .input__search:hover,
+    .input__search:focus {
+      background: #f7f7f7;
+      transform: translateZ(20px) translateX(-4px) translateY(-4px);
+      box-shadow: 4px 4px 0 0 #000;
+    }
+
+    .dark .input__search:hover,
+    .dark .input__search:focus {
+      background: #111827;
+      border-color: #E9B50B;
+    }
+
+    .input__container::before {
+      content: attr(data-label);
+      position: absolute;
+      top: -14px;
+      left: 18px;
+      background: #E9B50B;
+      color: #000;
+      font-weight: 800;
+      padding: 3px 10px;
+      font-size: 11px;
+      transform: translateZ(50px);
+      z-index: 4;
+      border: 2px solid #000;
+      letter-spacing: 0.5px;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    /* ========================================================
+       3. PENCIL ANIMATED LOADER COMPONENT
+       ======================================================== */
+    .pencil-loader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .pencil-loader {
+      display: block;
+      width: 140px;
+      height: 140px;
+    }
+
+    .pencil__body1,
+    .pencil__body2,
+    .pencil__body3,
+    .pencil__eraser,
+    .pencil__eraser-skew,
+    .pencil__point,
+    .pencil__rotate,
+    .pencil__stroke {
+      animation-duration: 3s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .pencil__rotate {
+      animation-name: pencilRotate;
+      transform-origin: 50% 50%;
+    }
+
+    .pencil__body1 { animation-name: pencilBody1; }
+    .pencil__body2 { animation-name: pencilBody2; }
+    .pencil__body3 { animation-name: pencilBody3; }
+    .pencil__eraser { animation-name: pencilEraser; }
+    .pencil__eraser-skew { animation-name: pencilEraserSkew; }
+    .pencil__point { animation-name: pencilPoint; }
+    .pencil__stroke { animation-name: pencilStroke; }
+
+    @keyframes pencilRotate {
+      from { transform: translate(100px, 100px) rotate(0); }
+      to { transform: translate(100px, 100px) rotate(720deg); }
+    }
+
+    @keyframes pencilBody1 {
+      from, to { stroke-dashoffset: 563.81; }
+      50% { stroke-dashoffset: 439.82; }
+    }
+    @keyframes pencilBody2 {
+      from, to { stroke-dashoffset: 406.84; }
+      50% { stroke-dashoffset: 317.3; }
+    }
+    @keyframes pencilBody3 {
+      from, to { stroke-dashoffset: 293.72; }
+      50% { stroke-dashoffset: 229.07; }
+    }
+    @keyframes pencilEraser {
+      from, to { transform: rotate(-45deg) translate(49px,-49px); }
+      50% { transform: rotate(0deg) translate(0px,-70px); }
+    }
+    @keyframes pencilEraserSkew {
+      from, to { transform: skewX(0); }
+      25% { transform: skewX(-10deg); }
+      75% { transform: skewX(10deg); }
+    }
+    @keyframes pencilPoint {
+      from, to { transform: rotate(-90deg) translate(49px,-49px); }
+      50% { transform: rotate(-45deg) translate(0px,-70px); }
+    }
+    @keyframes pencilStroke {
+      from { stroke-dashoffset: 439.82; stroke-dasharray: 439.82; }
+      50% { stroke-dashoffset: 0; stroke-dasharray: 439.82; }
+      to { stroke-dashoffset: -439.82; stroke-dasharray: 439.82; }
+    }
+
+    /* Page View Transitions */
+    .page-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .page-section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Smooth Scrollbar */
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cfc2b2; border-radius: 99px; }
+    .dark ::-webkit-scrollbar-thumb { background: #26354d; }
+
+    /* Shake animation */
+    @keyframes shakeAuth {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .auth-shake { animation: shakeAuth 0.35s ease-in-out; }
+  </style>
+</head>
+
+<body class="bg-[#F8F5EE] dark:bg-darkBg text-beige-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col justify-between transition-colors duration-300">
+
+  <!-- ==================== PENCIL ANIMATED LOADER SCREEN ==================== -->
+  <div id="pencil-loading-screen" class="fixed inset-0 z-50 bg-[#F8F5EE] dark:bg-[#0c1017] flex flex-col items-center justify-center p-6 text-center transition-all duration-500">
+    <div class="pencil-loader-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" height="180px" width="180px" viewBox="0 0 200 200" class="pencil-loader">
+        <defs>
+          <linearGradient id="pencilStrokeGrad" y2="0" x2="1" y1="0" x1="0">
+            <stop stop-color="#E9B50B" offset="0%"></stop>
+            <stop stop-color="#E05A47" offset="50%"></stop>
+            <stop stop-color="#10B981" offset="100%"></stop>
+          </linearGradient>
+        </defs>
+        <g fill="none" class="pencil__rotate">
+          <circle stroke-dashoffset="439.82" stroke-dasharray="439.82" stroke-width="2" stroke="url(#pencilStrokeGrad)" r="70" class="pencil__stroke"></circle>
+          <g transform="translate(100,100)">
+            <g class="pencil__body1">
+              <g class="pencil__body2">
+                <g class="pencil__body3">
+                  <path d="m -17,-70 l 34,0 l 0,8 l -34,0 z" fill="#231F1C" class="dark:fill-[#E9B50B]"></path>
+                  <path d="m -17,-62 l 34,0 l 0,42 l -34,0 z" fill="#E9B50B"></path>
+                  <path d="m -17,-20 l 34,0 l 0,8 l -34,0 z" fill="#E05A47"></path>
+                </g>
+              </g>
+            </g>
+            <g class="pencil__eraser-skew">
+              <g class="pencil__eraser">
+                <rect height="16" width="30" y="-72" x="-15" rx="3" fill="#f87171"></rect>
+                <rect height="4" width="30" y="-58" x="-15" fill="#e2e8f0"></rect>
+              </g>
+            </g>
+            <g class="pencil__point">
+              <polygon points="15,-14 -15,-14 0,16" fill="#f3c99f"></polygon>
+              <polygon points="5,4 -5,4 0,16" fill="#231F1C"></polygon>
+            </g>
+          </g>
+        </g>
+      </svg>
+
+      <div class="space-y-1 mt-2">
+        <h2 class="font-display text-2xl font-black tracking-tight text-beige-900 dark:text-accentGold">ACADEMIA BCA AI-DS</h2>
+        <p id="loader-quote" class="text-xs font-bold uppercase tracking-widest text-beige-600 dark:text-gray-400">Loading attendance registers & safe bunk matrices...</p>
+      </div>
+
+      <div class="w-48 h-1.5 bg-beige-200 dark:bg-gray-800 rounded-full overflow-hidden mt-3 border border-black/20 dark:border-gray-700">
+        <div id="splash-progress-bar" class="h-full bg-accentGold transition-all duration-1000 ease-out w-0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LOGIN SCREEN OVERLAY ==================== -->
+  <div id="auth-screen" class="fixed inset-0 z-40 bg-[#F8F5EE] dark:bg-darkBg flex items-center justify-center p-4">
+    <div id="auth-card" class="w-full max-w-md bg-white dark:bg-darkBg-card p-6 sm:p-8 rounded-2xl border-4 border-black dark:border-accentGold shadow-[10px_10px_0px_#000] dark:shadow-[10px_10px_0px_rgba(233,181,11,0.7)] space-y-6">
+      
+      <!-- Brand Crest -->
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-beige-900 text-accentGold border-3 border-black shadow-brutal mx-auto">
+          <i class="fa-solid fa-graduation-cap text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="font-display text-2xl font-extrabold text-beige-900 dark:text-white uppercase tracking-tight">Academia Portal</h2>
+          <p class="text-xs font-bold text-accentGold-dark dark:text-accentGold">BCA &bull; Artificial Intelligence & Data Science</p>
+        </div>
+      </div>
+
+      <!-- Auth Form with 3D Isometric Neo-Brutalist Inputs -->
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-6 pt-2">
+        <div class="input-3d-wrapper">
+          <div class="input__container" data-label="STUDENT ROLL / ID">
+            <div class="shadow__input"></div>
+            <button type="button" class="input__button__shadow" tabindex="-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000" width="20px" height="20px">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+              </svg>
+            </button>
+            <input
+              type="text"
+              id="login-username"
+              class="input__search"
+              placeholder="Enter Student ID (115652)"
+              required
+              autocomplete="username"
+            />
+          </div>
+        </div>
+
+        <div class="input-3d-wrapper">
+          <div class="input__container" data-label="PORTAL ACCESS KEY">
+            <div class="shadow__input"></div>
+            <button type="button" onclick="togglePasswordVisibility()" class="input__button__shadow" title="Show/Hide Password">
+              <i id="pwd-eye-icon" class="fa-solid fa-lock text-sm text-black"></i>
+            </button>
+            <input
+              type="password"
+              id="login-password"
+              class="input__search"
+              placeholder="Enter Password (priyanshu01)"
+              required
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <div id="auth-error-msg" class="hidden text-xs font-bold text-terracotta text-center bg-terracotta/10 p-2.5 rounded-lg border border-terracotta/30">
+          <i class="fa-solid fa-circle-exclamation mr-1"></i> Invalid Roll or Password. Use Roll: 115652
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-accentGold text-black font-display font-extrabold text-sm uppercase rounded-xl border-3 border-black shadow-[5px_5px_0px_#000] hover:bg-yellow-400 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center space-x-2">
+          <span>Sign In To Logbook</span>
+          <i class="fa-solid fa-arrow-right-to-bracket text-base"></i>
+        </button>
+
+        <div class="p-3 bg-beige-100 dark:bg-darkBg-muted rounded-xl border-2 border-black/20 dark:border-gray-800 text-[11px] text-beige-600 dark:text-gray-400 flex items-center justify-between font-medium">
+          <span>Session: <b>Semester 2026</b></span>
+          <span class="text-olive font-bold flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-olive animate-pulse"></span> Safe Sync</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN APPLICATION CONTAINER ==================== -->
+  <div id="app-container" class="opacity-0 transition-opacity duration-300 flex-1 flex flex-col w-full">
+    
+    <!-- NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 bg-[#F8F5EE]/95 dark:bg-darkBg/95 backdrop-blur-md border-b-2 border-black/10 dark:border-darkBg-border px-4 lg:px-8 py-3 transition-colors">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3 cursor-pointer group" onclick="navigateTo('dashboard')">
+          <div class="w-10 h-10 rounded-xl bg-beige-900 dark:bg-accentGold flex items-center justify-center text-accentGold dark:text-black border-2 border-black shadow-brutal-sm group-hover:rotate-2 transition-transform">
+            <i class="fa-solid fa-cube text-lg"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-display text-lg font-black tracking-tight text-beige-900 dark:text-white leading-none">ACADEMIA</span>
+              <span class="text-[9px] uppercase font-black bg-accentGold text-black px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000]">BCA AI-DS</span>
+            </div>
+            <p class="text-[11px] text-beige-500 dark:text-gray-400 font-semibold">Roll: 115652 &bull; Attendance Shield</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="hidden md:flex items-center space-x-1.5 border-2 border-black dark:border-gray-700 bg-white dark:bg-darkBg-muted p-1 rounded-xl shadow-brutal-sm text-xs font-bold">
+          <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-1.5 rounded-lg transition-all bg-beige-900 text-white dark:bg-accentGold dark:text-black shadow-xs">
+            <i class="fa-solid fa-chart-pie mr-1"></i> Dashboard
+          </button>
+          <button onclick="navigateTo('bunk-manager')" id="nav-bunk-manager" class="nav-btn px-3 py-1.5 rounded-lg transition-all text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-calculator mr-1"></i> Can I Bunk?
+          </button>
+          <button onclick="navigateTo('timetable')" id="nav-timetable" class="nav-btn px-3 py-1.5 rounded-lg transition-all text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-calendar-day mr-1"></i> Timetable
+          </button>
+          <button onclick="navigateTo('calculator')" id="nav-calculator" class="nav-btn px-3 py-1.5 rounded-lg transition-all text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Predictor
+          </button>
+          <button onclick="navigateTo('guide')" id="nav-guide" class="nav-btn px-3 py-1.5 rounded-lg transition-all text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-circle-question mr-1"></i> Guide
+          </button>
+          <button onclick="navigateTo('analytics')" id="nav-analytics" class="nav-btn px-3 py-1.5 rounded-lg transition-all text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white">
+            <i class="fa-solid fa-sliders mr-1"></i> Settings
+          </button>
+        </nav>
+
+        <!-- Right Tools: EXACT BB-8 & Quick Actions -->
+        <div class="flex items-center space-x-2.5">
+          
+          <!-- BB-8 Droid Toggle Container (exact markup & physics) -->
+          <div class="p-1.5 rounded-xl bg-white dark:bg-darkBg-card border-2 border-black dark:border-gray-700 shadow-brutal-sm flex items-center" title="Toggle BB-8 Day/Night Mode">
+            <label class="bb8-toggle" id="theme-toggle-label">
+              <input class="bb8-toggle__checkbox" id="theme-toggle-checkbox" type="checkbox" onchange="handleThemeToggle(this.checked)">
+              <div class="bb8-toggle__container">
+                <div class="bb8-toggle__scenery">
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="bb8-toggle__star"></div>
+                  <div class="tatto-1"></div>
+                  <div class="tatto-2"></div>
+                  <div class="gomrassen"></div>
+                  <div class="hermes"></div>
+                  <div class="chenini"></div>
+                  <div class="bb8-toggle__cloud"></div>
+                  <div class="bb8-toggle__cloud"></div>
+                  <div class="bb8-toggle__cloud"></div>
+                </div>
+                <div class="bb8">
+                  <div class="bb8__head-container">
+                    <div class="bb8__antenna"></div>
+                    <div class="bb8__antenna"></div>
+                    <div class="bb8__head"></div>
+                  </div>
+                  <div class="bb8__body"></div>
+                </div>
+                <div class="artificial__hidden">
+                  <div class="bb8__shadow"></div>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Logout Button -->
+          <button onclick="handleLogout()" class="p-2 rounded-xl bg-white dark:bg-darkBg-card text-beige-700 dark:text-gray-300 hover:text-terracotta border-2 border-black dark:border-gray-700 shadow-brutal-sm transition-all" title="Sign Out">
+            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+          </button>
+
+          <!-- Mobile Toggle Button -->
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-white dark:bg-darkBg-card text-beige-900 dark:text-white border-2 border-black dark:border-gray-700 shadow-brutal-sm">
+            <i class="fa-solid fa-bars text-sm"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div id="mobile-menu" class="hidden md:hidden mt-3 pt-3 border-t-2 border-black/10 dark:border-gray-800 grid grid-cols-2 gap-2 text-xs font-bold">
+        <button onclick="navigateTo('dashboard'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-accentGold"></i> Dashboard
+        </button>
+        <button onclick="navigateTo('bunk-manager'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-olive"></i> Can I Bunk?
+        </button>
+        <button onclick="navigateTo('timetable'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-day text-terracotta"></i> Timetable
+        </button>
+        <button onclick="navigateTo('calculator'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-accentGold"></i> Predictor
+        </button>
+        <button onclick="navigateTo('guide'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-circle-question text-olive"></i> Guide
+        </button>
+        <button onclick="navigateTo('analytics'); toggleMobileMenu();" class="text-left p-2.5 rounded-lg bg-white dark:bg-darkBg-card border border-black/20 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-terracotta"></i> Settings
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1">
+
+      <!-- 3D ISOMETRIC SEARCH BAR COMPONENT -->
+      <div class="w-full">
+        <div class="input-3d-wrapper">
+          <div class="input__container" data-label="BCA AI-DS SUBJECT SEARCH & FILTER">
+            <div class="shadow__input"></div>
+            <button class="input__button__shadow" onclick="triggerPencilRefresh()" title="Search & Refresh">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z"></path>
+              </svg>
+            </button>
+            <input
+              type="text"
+              id="global-subject-search"
+              class="input__search"
+              placeholder="Search BCA subjects: Java, Web Dev, IITOA, Math, Labs..."
+              oninput="handleSearchFilter(this.value)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- EXAM ELIGIBILITY BANNER -->
+      <div id="plain-english-banner" class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkBg-card border-2 border-black dark:border-darkBg-border shadow-brutal flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-3.5">
+          <div id="status-symbol-icon" class="w-12 h-12 rounded-xl bg-beige-900 text-accentGold flex items-center justify-center text-xl font-bold flex-shrink-0 border-2 border-black shadow-brutal-sm">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-display text-base font-bold text-beige-900 dark:text-white">Exam Clearance Status</h3>
+              <span id="exam-badge" class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-olive text-white border border-black">CLEAR</span>
+            </div>
+            <p id="plain-english-text" class="text-xs text-beige-600 dark:text-gray-300 mt-0.5 font-medium leading-relaxed">
+              Analyzing attendance data...
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap w-full md:w-auto">
+          <button onclick="navigateTo('bunk-manager')" class="flex-1 md:flex-none px-4 py-2 text-xs font-bold rounded-xl bg-white dark:bg-darkBg-muted border-2 border-black text-black dark:text-white hover:bg-beige-100 dark:hover:bg-gray-800 shadow-brutal-sm transition-all">
+            Bunk Calculator →
+          </button>
+          <button onclick="openMedicalLeaveModal()" class="flex-1 md:flex-none px-4 py-2 text-xs font-bold rounded-xl bg-accentGold text-black border-2 border-black shadow-brutal-sm hover:bg-accentGold-light transition-all">
+            + Duty / Med Leave
+          </button>
+        </div>
+      </div>
+
+      <!-- ==================== SECTION 1: DASHBOARD ==================== -->
+      <section id="sec-dashboard" class="page-section active space-y-6">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-black/10 dark:border-gray-800 pb-4 gap-2">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">BCA AI-DS Cockpit</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">Attendance Overview</h2>
+          </div>
+          <div class="flex items-center space-x-2 text-xs font-semibold">
+            <span class="text-beige-600 dark:text-gray-400">Target Threshold:</span>
+            <span id="display-target-perc" class="font-display font-extrabold px-3 py-1 bg-accentGold text-black rounded-lg border-2 border-black shadow-brutal-sm">75%</span>
+            <button onclick="navigateTo('analytics')" class="p-1 text-beige-700 dark:text-gray-300 hover:text-black dark:hover:text-white" title="Change target">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-beige-500 dark:text-gray-400 font-extrabold">Overall Rate</p>
+                <h3 id="stat-overall-pct" class="font-display text-3xl font-extrabold text-beige-900 dark:text-white mt-1">0%</h3>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-beige-100 dark:bg-gray-800 flex items-center justify-center text-black dark:text-accentGold border-2 border-black shadow-brutal-sm">
+                <i class="fa-solid fa-percent text-sm"></i>
+              </div>
+            </div>
+            <p id="stat-overall-desc" class="text-xs font-bold mt-4 text-beige-600 dark:text-gray-400">Calculating...</p>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-olive/70 shadow-brutal flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-olive font-extrabold">Safe Bunks Left</p>
+                <h3 id="stat-bunks-left" class="font-display text-3xl font-extrabold text-olive mt-1">0</h3>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-olive/15 flex items-center justify-center text-olive border-2 border-black shadow-brutal-sm">
+                <i class="fa-solid fa-mug-hot text-sm"></i>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-beige-600 dark:text-gray-400 mt-4">Classes you can skip safely</p>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-terracotta/70 shadow-brutal flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-terracotta font-extrabold">Classes Needed</p>
+                <h3 id="stat-must-attend" class="font-display text-3xl font-extrabold text-terracotta mt-1">0</h3>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-terracotta/15 flex items-center justify-center text-terracotta border-2 border-black shadow-brutal-sm">
+                <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+              </div>
+            </div>
+            <p class="text-xs font-semibold text-beige-600 dark:text-gray-400 mt-4">Needed to recover 75% goal</p>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal flex flex-col justify-between">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-[11px] uppercase tracking-wider text-beige-500 dark:text-gray-400 font-extrabold">Lectures Held</p>
+                <h3 id="stat-total-held" class="font-display text-3xl font-extrabold text-beige-900 dark:text-white mt-1">0</h3>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-beige-100 dark:bg-gray-800 flex items-center justify-center text-black dark:text-accentGold border-2 border-black shadow-brutal-sm">
+                <i class="fa-solid fa-graduation-cap text-sm"></i>
+              </div>
+            </div>
+            <p id="stat-total-breakdown" class="text-xs font-semibold text-beige-600 dark:text-gray-400 mt-4">0 Attended / 0 Missed</p>
+          </div>
+
+        </div>
+
+        <!-- Subjects Grid -->
+        <div class="space-y-4 pt-2">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-display text-xl font-extrabold text-beige-900 dark:text-white">Registered BCA AI-DS Subjects</h3>
+              <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">Use + and - buttons to adjust count after lecture ends.</p>
+            </div>
+            <button onclick="openAddSubjectModal()" class="text-xs font-extrabold text-black bg-accentGold hover:bg-accentGold-light px-3.5 py-2 rounded-xl border-2 border-black shadow-brutal-sm transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> New Subject
+            </button>
+          </div>
+
+          <div id="subject-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Cards populated via JS -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== SECTION 2: BUNK MANAGER ==================== -->
+      <section id="sec-bunk-manager" class="page-section space-y-6">
+        
+        <div class="border-b-2 border-black/10 dark:border-gray-800 pb-4">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">Smart Advisor</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">Can I Bunk Today?</h2>
+          <p class="text-xs text-beige-600 dark:text-gray-400 mt-1">Real-time clearance chart calculated against your <span class="font-bold text-black dark:text-accentGold" id="matrix-target-pct">75%</span> rule.</p>
+        </div>
+
+        <!-- Matrix Table -->
+        <div class="bg-white dark:bg-darkBg-card rounded-2xl p-5 border-2 border-black dark:border-darkBg-border shadow-brutal space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Subject Allowance & Clearance Breakdown</h3>
+              <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">Shows exactly how many bunks you have left or classes needed.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-olive/15 text-olive border border-olive/30">🟢 Safe Buffer</span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-extrabold bg-terracotta/15 text-terracotta border border-terracotta/30">🔴 Shortage</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b-2 border-black/10 dark:border-gray-800 text-beige-600 dark:text-gray-400 uppercase tracking-wider font-extrabold text-[10px]">
+                  <th class="py-3 px-3">Subject / Module</th>
+                  <th class="py-3 px-3 text-center">Attended / Held</th>
+                  <th class="py-3 px-3 text-center">Current %</th>
+                  <th class="py-3 px-3 text-center">Status</th>
+                  <th class="py-3 px-3 text-center">Safe Bunks / Recovery</th>
+                  <th class="py-3 px-3 text-right">Quick Mark</th>
+                </tr>
+              </thead>
+              <tbody id="bunk-matrix-body" class="divide-y divide-black/5 dark:divide-gray-800">
+                <!-- JS Populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Two Columns: Danger vs Chill -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-2 text-terracotta font-extrabold">
+              <i class="fa-solid fa-ban text-base"></i>
+              <h4 class="font-display text-base text-beige-900 dark:text-white">Danger Zone (Do Not Bunk)</h4>
+            </div>
+            <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">
+              Attendance in these subjects is critically below target. Skipping here risks debarment.
+            </p>
+            <ul id="critical-subject-list" class="space-y-2 pt-1 text-xs">
+              <!-- JS Injected -->
+            </ul>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-2 text-olive font-extrabold">
+              <i class="fa-solid fa-umbrella-beach text-base"></i>
+              <h4 class="font-display text-base text-beige-900 dark:text-white">Chill Zone (Safe Buffer)</h4>
+            </div>
+            <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">
+              High buffer modules. You can skip lectures without falling below your threshold.
+            </p>
+            <ul id="safe-subject-list" class="space-y-2 pt-1 text-xs">
+              <!-- JS Injected -->
+            </ul>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== SECTION 3: PREDICTOR ==================== -->
+      <section id="sec-calculator" class="page-section space-y-6">
+        
+        <div class="border-b-2 border-black/10 dark:border-gray-800 pb-4">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">Interactive Simulation</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">What-If Predictor</h2>
+          <p class="text-xs text-beige-600 dark:text-gray-400 mt-1">Preview how future classes or bunks will shift your percentage before making decisions.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Controls -->
+          <div class="lg:col-span-5 bg-white dark:bg-darkBg-card p-6 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-4">
+            <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Simulation Setup</h3>
+            
+            <div class="space-y-4 text-xs font-semibold">
+              <div>
+                <label class="block text-beige-700 dark:text-gray-300 mb-1">Select Subject</label>
+                <select id="sim-subject-select" onchange="runSimulation()" class="w-full bg-beige-50 dark:bg-darkBg-muted border-2 border-black dark:border-gray-700 rounded-xl px-3 py-2.5 text-beige-900 dark:text-white font-bold outline-none">
+                  <!-- JS Injected -->
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-beige-600 dark:text-gray-400 mb-1">Attended Currently</label>
+                  <input type="number" id="sim-current-attended" readonly class="w-full bg-beige-100 dark:bg-gray-800 border-2 border-black/20 rounded-xl px-3 py-2 text-beige-800 dark:text-gray-200 font-extrabold text-sm">
+                </div>
+                <div>
+                  <label class="block text-beige-600 dark:text-gray-400 mb-1">Held Currently</label>
+                  <input type="number" id="sim-current-total" readonly class="w-full bg-beige-100 dark:bg-gray-800 border-2 border-black/20 rounded-xl px-3 py-2 text-beige-800 dark:text-gray-200 font-extrabold text-sm">
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-beige-700 dark:text-gray-300">Upcoming classes you will ATTEND</label>
+                  <span id="sim-attend-next-val" class="font-display text-base font-extrabold text-olive">5</span>
+                </div>
+                <input type="range" id="sim-attend-next" min="0" max="30" value="5" oninput="runSimulation()" class="w-full accent-olive h-2 bg-beige-200 dark:bg-gray-700 rounded-lg cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-beige-700 dark:text-gray-300">Upcoming classes you will BUNK</label>
+                  <span id="sim-bunk-next-val" class="font-display text-base font-extrabold text-terracotta">0</span>
+                </div>
+                <input type="range" id="sim-bunk-next" min="0" max="30" value="0" oninput="runSimulation()" class="w-full accent-terracotta h-2 bg-beige-200 dark:bg-gray-700 rounded-lg cursor-pointer">
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Panel -->
+          <div class="lg:col-span-7 bg-beige-900 dark:bg-[#111726] text-white p-6 sm:p-7 rounded-2xl border-2 border-black shadow-brutal flex flex-col justify-between space-y-6">
+            <div>
+              <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <span class="text-[11px] font-extrabold uppercase tracking-widest text-accentGold">Prediction Result</span>
+                <span id="sim-status-badge" class="px-3 py-1 text-xs rounded-full bg-olive text-white font-extrabold">SAFE SCENARIO</span>
+              </div>
+
+              <div class="mt-6 flex flex-col sm:flex-row items-baseline justify-between gap-3">
+                <div>
+                  <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Projected Percentage</p>
+                  <h4 id="sim-projected-pct" class="font-display text-5xl sm:text-6xl font-extrabold text-accentGold mt-1">0%</h4>
+                </div>
+                <div class="text-left sm:text-right">
+                  <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Current Baseline</p>
+                  <p id="sim-current-pct-label" class="font-display text-2xl text-gray-300 mt-1">0%</p>
+                </div>
+              </div>
+
+              <div class="mt-6 grid grid-cols-3 gap-3 text-xs bg-black/40 p-3.5 rounded-xl border border-gray-700">
+                <div>
+                  <span class="block text-gray-400 text-[10px] uppercase font-bold">New Attended</span>
+                  <span id="sim-new-attended" class="font-extrabold text-base text-white">0</span>
+                </div>
+                <div>
+                  <span class="block text-gray-400 text-[10px] uppercase font-bold">New Total</span>
+                  <span id="sim-new-total" class="font-extrabold text-base text-white">0</span>
+                </div>
+                <div>
+                  <span class="block text-gray-400 text-[10px] uppercase font-bold">Shift</span>
+                  <span id="sim-diff-pct" class="font-extrabold text-base text-olive-light">+0.0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="sim-advice-box" class="p-4 rounded-xl bg-white/10 border border-white/10 text-xs text-gray-200 font-medium">
+              Adjust the sliders on the left to simulate future classes!
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================== SECTION 4: TIMETABLE ==================== -->
+      <section id="sec-timetable" class="page-section space-y-6">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-black/10 dark:border-gray-800 pb-4 gap-3">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">Weekly Schedule</span>
+            <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">Day Timetable & Fast Logger</h2>
+          </div>
+          <div class="flex items-center space-x-1 bg-white dark:bg-darkBg-card p-1 rounded-xl border-2 border-black dark:border-gray-700 shadow-brutal-sm text-xs font-bold">
+            <button onclick="setDayFilter('Mon')" class="day-tab px-3 py-1.5 rounded-lg active bg-beige-900 text-white dark:bg-accentGold dark:text-black">Mon</button>
+            <button onclick="setDayFilter('Tue')" class="day-tab px-3 py-1.5 rounded-lg text-beige-700 dark:text-gray-300">Tue</button>
+            <button onclick="setDayFilter('Wed')" class="day-tab px-3 py-1.5 rounded-lg text-beige-700 dark:text-gray-300">Wed</button>
+            <button onclick="setDayFilter('Thu')" class="day-tab px-3 py-1.5 rounded-lg text-beige-700 dark:text-gray-300">Thu</button>
+            <button onclick="setDayFilter('Fri')" class="day-tab px-3 py-1.5 rounded-lg text-beige-700 dark:text-gray-300">Fri</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <div class="lg:col-span-2 space-y-3">
+            <div class="flex justify-between items-center">
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">
+                Lectures for <span id="current-selected-day" class="text-accentGold-dark dark:text-accentGold">Monday</span>
+              </h3>
+              <button onclick="openAddScheduleModal()" class="text-xs font-extrabold text-black bg-accentGold hover:bg-accentGold-light px-3 py-1.5 rounded-xl border-2 border-black shadow-brutal-sm">
+                + Add Time Slot
+              </button>
+            </div>
+
+            <div id="schedule-list" class="space-y-3">
+              <!-- JS Injected -->
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-4 h-fit">
+            <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">One-Tap Class Punching</h3>
+            <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">Quickly mark attendance right after lectures dismiss.</p>
+            
+            <div id="quick-log-subject-list" class="space-y-2 text-xs">
+              <!-- JS Injected -->
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================== SECTION 5: GUIDE ==================== -->
+      <section id="sec-guide" class="page-section space-y-6">
+        
+        <div class="border-b-2 border-black/10 dark:border-gray-800 pb-4">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">Manual & Formulas</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">How To Use Academia OS</h2>
+          <p class="text-xs text-beige-600 dark:text-gray-400 mt-1">Master your attendance calculations, protect your hall ticket, and plan bunks responsibly.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="bg-white dark:bg-darkBg-card p-6 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-3 text-accentGold">
+              <span class="w-8 h-8 rounded-lg bg-black text-accentGold flex items-center justify-center font-display font-black text-sm border border-accentGold">01</span>
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Safe Bunk Formulas</h3>
+            </div>
+            <p class="text-xs text-beige-700 dark:text-gray-300 leading-relaxed font-medium">
+              Calculates how many classes can be safely skipped while staying &ge; 75%:
+            </p>
+            <div class="bg-beige-100 dark:bg-darkBg-muted p-3.5 rounded-xl border border-black/10 dark:border-gray-700 text-xs font-mono space-y-1.5">
+              <div class="text-olive font-bold">Safe Bunks = floor((Attended &times; 100 - Target &times; Held) / Target)</div>
+              <div class="text-terracotta font-bold">Must Attend = ceil((Target &times; Held - 100 &times; Attended) / (100 - Target))</div>
+            </div>
+            <p class="text-[11px] text-beige-500 dark:text-gray-400 font-medium">
+              If Safe Bunks is 3, skipping the next 3 classes will keep your attendance above the minimum bar.
+            </p>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-6 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-3 text-accentGold">
+              <span class="w-8 h-8 rounded-lg bg-black text-accentGold flex items-center justify-center font-display font-black text-sm border border-accentGold">02</span>
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Daily Punching</h3>
+            </div>
+            <p class="text-xs text-beige-700 dark:text-gray-300 leading-relaxed font-medium">
+              Fast logging through dashboard cards or the Timetable view:
+            </p>
+            <ul class="text-xs text-beige-700 dark:text-gray-300 space-y-2 list-disc list-inside font-medium">
+              <li>Tap <b>+ Present</b> if you were marked in class.</li>
+              <li>Tap <b>+ Bunk</b> if you skipped or missed attendance.</li>
+              <li>Use the <b>+ / -</b> buttons on cards to adjust manual counts for teacher corrections.</li>
+            </ul>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-6 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-3 text-accentGold">
+              <span class="w-8 h-8 rounded-lg bg-black text-accentGold flex items-center justify-center font-display font-black text-sm border border-accentGold">03</span>
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">What-If Predictor</h3>
+            </div>
+            <p class="text-xs text-beige-700 dark:text-gray-300 leading-relaxed font-medium">
+              Before taking a leave or going to a college fest:
+            </p>
+            <ul class="text-xs text-beige-700 dark:text-gray-300 space-y-2 list-disc list-inside font-medium">
+              <li>Select your subject in the Predictor tab.</li>
+              <li>Drag the <b>Bunk Slider</b> to see how many percent you will lose.</li>
+              <li>Check if the status remains green before making plans!</li>
+            </ul>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-6 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="flex items-center space-x-3 text-accentGold">
+              <span class="w-8 h-8 rounded-lg bg-black text-accentGold flex items-center justify-center font-display font-black text-sm border border-accentGold">04</span>
+              <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Medical & OD Leave</h3>
+            </div>
+            <p class="text-xs text-beige-700 dark:text-gray-300 leading-relaxed font-medium">
+              For authorized sports, events, or illness:
+            </p>
+            <ul class="text-xs text-beige-700 dark:text-gray-300 space-y-2 list-disc list-inside font-medium">
+              <li>Click <b>+ Duty / Med Leave</b> in the top dashboard banner.</li>
+              <li>Enter sanctioned hours approved by faculty.</li>
+              <li>Increments both attended & held count without penalizing your score.</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================== SECTION 6: SETTINGS ==================== -->
+      <section id="sec-analytics" class="page-section space-y-6">
+        
+        <div class="border-b-2 border-black/10 dark:border-gray-800 pb-4">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-accentGold-dark dark:text-accentGold">Settings & Data</span>
+          <h2 class="font-display text-2xl sm:text-3xl font-extrabold text-beige-900 dark:text-white">Configuration</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-accentGold text-black flex items-center justify-center font-bold text-base border-2 border-black shadow-brutal-sm">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Target Minimum %</h3>
+            <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">Standard college requirement is 75%.</p>
+            <div>
+              <input type="number" id="target-threshold-input" min="40" max="100" value="75" class="w-full bg-beige-50 dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-sm text-beige-900 dark:text-white font-bold outline-none">
+            </div>
+            <button onclick="saveTargetThreshold()" class="w-full py-2.5 text-xs font-extrabold bg-beige-900 dark:bg-accentGold text-white dark:text-black rounded-xl border-2 border-black shadow-brutal-sm hover:opacity-90">
+              Save Target Goal
+            </button>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-olive text-white flex items-center justify-center font-bold text-base border-2 border-black shadow-brutal-sm">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Backup & Transfer</h3>
+            <p class="text-xs text-beige-600 dark:text-gray-400 font-medium">Export records to JSON to transfer between devices.</p>
+            <div class="flex space-x-2 pt-1">
+              <button onclick="exportData()" class="flex-1 py-2 text-xs font-extrabold border-2 border-black bg-white dark:bg-darkBg-muted text-black dark:text-white rounded-xl shadow-brutal-sm hover:bg-beige-100">Export</button>
+              <button onclick="triggerImport()" class="flex-1 py-2 text-xs font-extrabold border-2 border-black bg-white dark:bg-darkBg-muted text-black dark:text-white rounded-xl shadow-brutal-sm hover:bg-beige-100">Import</button>
+              <input type="file" id="import-file-input" class="hidden" onchange="importData(event)" accept=".json">
+            </div>
+            <button onclick="resetAllData()" class="w-full py-1.5 text-xs text-terracotta hover:underline text-center block font-bold">Reset to Default BCA Syllabus</button>
+          </div>
+
+          <div class="bg-white dark:bg-darkBg-card p-5 rounded-2xl border-2 border-black dark:border-darkBg-border shadow-brutal space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-terracotta text-white flex items-center justify-center font-bold text-base border-2 border-black shadow-brutal-sm">
+              <i class="fa-solid fa-id-card"></i>
+            </div>
+            <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Active Student</h3>
+            <div class="text-xs space-y-1.5 text-beige-700 dark:text-gray-300 font-medium">
+              <p>Student ID: <b class="font-mono text-black dark:text-accentGold">115652</b></p>
+              <p>Program: <b>BCA (AI & Data Science)</b></p>
+              <p>Status: <b class="text-olive">Active Local Storage</b></p>
+            </div>
+            <button onclick="handleLogout()" class="w-full py-2.5 text-xs font-extrabold bg-terracotta/20 text-terracotta rounded-xl border border-terracotta hover:bg-terracotta/30">
+              Sign Out
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t-2 border-black/10 dark:border-gray-800 bg-white/60 dark:bg-darkBg-card py-4 px-4 text-center text-xs text-beige-600 dark:text-gray-400">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <p class="font-display font-bold text-beige-900 dark:text-white">Academia Bunk OS &bull; BCA AI-DS Edition</p>
+        <p class="font-medium">Private offline storage &mdash; all data stored directly in browser cache.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==================== ADD / EDIT SUBJECT MODAL ==================== -->
+  <div id="modal-subject" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-[#F8F5EE] dark:bg-darkBg-card border-2 border-black w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-brutal-lg">
+      <div class="flex justify-between items-center border-b-2 border-black/10 dark:border-gray-700 pb-3">
+        <h3 id="modal-subject-title" class="font-display text-xl font-bold text-beige-900 dark:text-white">Add Subject</h3>
+        <button onclick="closeSubjectModal()" class="text-beige-500 hover:text-black dark:hover:text-white font-bold"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form id="form-subject" onsubmit="saveSubject(event)" class="space-y-4">
+        <input type="hidden" id="subj-id">
+        
+        <div class="input-3d-wrapper">
+          <div class="input__container" data-label="BCA MODULE TITLE">
+            <div class="shadow__input"></div>
+            <button type="button" class="input__button__shadow">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"></path>
+              </svg>
+            </button>
+            <input
+              type="text"
+              id="subj-name"
+              required
+              class="input__search"
+              placeholder="e.g. Computer Organization"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Attended</label>
+            <input type="number" id="subj-attended" min="0" value="0" required class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-bold text-base outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Total Held</label>
+            <input type="number" id="subj-total" min="0" value="0" required class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-bold text-base outline-none">
+          </div>
+        </div>
+
+        <div class="text-xs">
+          <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Custom Target % (Default: 75%)</label>
+          <input type="number" id="subj-target" min="40" max="100" placeholder="75" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+        </div>
+
+        <div class="flex space-x-3 pt-2">
+          <button type="button" onclick="closeSubjectModal()" class="flex-1 py-2.5 rounded-xl border-2 border-black text-black dark:text-white font-bold hover:bg-beige-200 dark:hover:bg-gray-800">Cancel</button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-accentGold text-black font-extrabold border-2 border-black shadow-brutal-sm hover:bg-accentGold-light">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== ADD SCHEDULE MODAL ==================== -->
+  <div id="modal-schedule" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-[#F8F5EE] dark:bg-darkBg-card border-2 border-black w-full max-w-md rounded-2xl p-6 space-y-4 shadow-brutal-lg">
+      <div class="flex justify-between items-center border-b-2 border-black/10 dark:border-gray-700 pb-3">
+        <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Add Lecture Slot</h3>
+        <button onclick="closeScheduleModal()" class="text-beige-500 hover:text-black dark:hover:text-white font-bold"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="form-schedule" onsubmit="saveScheduleSlot(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Day</label>
+          <select id="slot-day" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+            <option value="Mon">Monday</option>
+            <option value="Tue">Tuesday</option>
+            <option value="Wed">Wednesday</option>
+            <option value="Thu">Thursday</option>
+            <option value="Fri">Friday</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Subject</label>
+          <select id="slot-subject-select" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Time</label>
+            <input type="text" id="slot-time" placeholder="10:00 AM" required class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+          </div>
+          <div>
+            <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Room</label>
+            <input type="text" id="slot-room" placeholder="LH-1 / Lab 2" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+          </div>
+        </div>
+
+        <div class="flex space-x-3 pt-2">
+          <button type="button" onclick="closeScheduleModal()" class="flex-1 py-2.5 rounded-xl border-2 border-black text-black dark:text-white font-bold">Cancel</button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-accentGold text-black font-extrabold border-2 border-black shadow-brutal-sm hover:bg-accentGold-light">Add to Routine</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MEDICAL LEAVE MODAL ==================== -->
+  <div id="modal-med-leave" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-[#F8F5EE] dark:bg-darkBg-card border-2 border-black w-full max-w-md rounded-2xl p-6 space-y-4 shadow-brutal-lg">
+      <div class="flex justify-between items-center border-b-2 border-black/10 dark:border-gray-700 pb-3">
+        <h3 class="font-display text-lg font-bold text-beige-900 dark:text-white">Medical / OD Duty Waiver</h3>
+        <button onclick="closeMedicalLeaveModal()" class="text-beige-500 hover:text-black dark:hover:text-white font-bold"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <p class="text-beige-600 dark:text-gray-300 font-medium">Official sanctioned leaves add both attended and held periods directly:</p>
+        
+        <div>
+          <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Subject</label>
+          <select id="med-subject-select" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-medium outline-none">
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-beige-700 dark:text-gray-300 mb-1">Approved Lectures</label>
+          <input type="number" id="med-count" min="1" max="25" value="1" class="w-full bg-white dark:bg-darkBg-muted border-2 border-black rounded-xl px-3 py-2 text-beige-900 dark:text-white font-bold text-base outline-none">
+        </div>
+
+        <div class="flex space-x-3 pt-2">
+          <button type="button" onclick="closeMedicalLeaveModal()" class="flex-1 py-2.5 rounded-xl border-2 border-black text-black dark:text-white font-bold">Cancel</button>
+          <button type="button" onclick="submitMedicalLeave()" class="flex-1 py-2.5 rounded-xl bg-olive text-white font-extrabold border-2 border-black shadow-brutal-sm hover:opacity-90">Apply Waiver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-black text-white px-5 py-3 rounded-xl shadow-2xl text-xs flex items-center space-x-3 border-2 border-accentGold font-bold">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-accentGold text-base"></i>
+    <span id="toast-msg">Notification message</span>
+  </div>
+
+  <script>
+    /* Default BCA AI-DS Syllabus Data */
+    const BCA_AI_DS_SYLLABUS = [
+      { id: '1', name: 'Computer organization', code: 'BCA-101', attended: 21, total: 24, target: 75, type: 'theory' },
+      { id: '2', name: 'Problem solving with java', code: 'BCA-102', attended: 24, total: 28, target: 75, type: 'theory' },
+      { id: '3', name: 'Basics of web development', code: 'BCA-103', attended: 22, total: 25, target: 75, type: 'theory' },
+      { id: '4', name: 'Computational mathematics', code: 'BCA-104', attended: 17, total: 24, target: 75, type: 'theory' },
+      { id: '5', name: 'IITOA', code: 'BCA-105', attended: 20, total: 22, target: 75, type: 'theory' },
+      { id: '6', name: 'EVS', code: 'BCA-106', attended: 16, total: 18, target: 75, type: 'theory' },
+      { id: '7', name: 'English', code: 'BCA-107', attended: 19, total: 21, target: 75, type: 'theory' },
+      { id: '8', name: 'English lab', code: 'BCA-108L', attended: 10, total: 12, target: 75, type: 'lab' },
+      { id: '9', name: 'Java Lab', code: 'BCA-109L', attended: 12, total: 14, target: 75, type: 'lab' },
+      { id: '10', name: 'WEb dev Lab', code: 'BCA-110L', attended: 11, total: 13, target: 75, type: 'lab' }
+    ];
+
+    const DEFAULT_APP_STATE = {
+      globalTarget: 75,
+      darkMode: false,
+      isAuthenticated: false,
+      courseName: 'BCA AI-DS',
+      studentId: '115652',
+      subjects: BCA_AI_DS_SYLLABUS,
+      schedule: [
+        { id: 's1', day: 'Mon', subjectId: '1', time: '09:00 AM - 10:00 AM', room: 'LH-1' },
+        { id: 's2', day: 'Mon', subjectId: '2', time: '10:00 AM - 11:00 AM', room: 'LH-1' },
+        { id: 's3', day: 'Mon', subjectId: '9', time: '11:30 AM - 01:30 PM', room: 'Java Lab' },
+        { id: 's4', day: 'Tue', subjectId: '3', time: '09:30 AM - 10:30 AM', room: 'LH-2' },
+        { id: 's5', day: 'Tue', subjectId: '10', time: '11:00 AM - 01:00 PM', room: 'Web Lab' },
+        { id: 's6', day: 'Wed', subjectId: '4', time: '10:00 AM - 11:00 AM', room: 'LH-3' },
+        { id: 's7', day: 'Wed', subjectId: '5', time: '11:30 AM - 12:30 PM', room: 'LH-3' },
+        { id: 's8', day: 'Thu', subjectId: '6', time: '09:00 AM - 10:00 AM', room: 'LH-1' },
+        { id: 's9', day: 'Thu', subjectId: '7', time: '10:00 AM - 11:00 AM', room: 'LH-1' },
+        { id: 's10', day: 'Thu', subjectId: '8', time: '11:30 AM - 01:00 PM', room: 'Lang Lab' },
+        { id: 's11', day: 'Fri', subjectId: '2', time: '09:30 AM - 10:30 AM', room: 'LH-2' },
+        { id: 's12', day: 'Fri', subjectId: '4', time: '10:30 AM - 11:30 AM', room: 'LH-2' }
+      ]
+    };
+
+    let appState = DEFAULT_APP_STATE;
+    try {
+      const stored = localStorage.getItem('academia_bca_aids_state');
+      if (stored) {
+        appState = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn("Storage access failed, using default state", e);
+    }
+
+    let selectedDayFilter = 'Mon';
+    let searchQuery = '';
+
+    function saveAppState() {
+      try {
+        localStorage.setItem('academia_bca_aids_state', JSON.stringify(appState));
+      } catch (e) {
+        console.warn("Saving to storage failed", e);
+      }
+      renderApp();
+    }
+
+    function dismissLoader() {
+      const loader = document.getElementById('pencil-loading-screen');
+      if (loader && loader.style.display !== 'none') {
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 400);
+      }
+    }
+
+    function triggerPencilRefresh(duration = 750) {
+      const loader = document.getElementById('pencil-loading-screen');
+      const quote = document.getElementById('loader-quote');
+      if (quote) quote.innerText = 'Calculating safe bunks and syncing BCA AI-DS registers...';
+      if (loader) {
+        loader.style.display = 'flex';
+        loader.style.opacity = '1';
+        setTimeout(() => {
+          loader.style.opacity = '0';
+          setTimeout(() => { loader.style.display = 'none'; }, 400);
+        }, duration);
+      }
+    }
+
+    function saveSubject(e) {
+      e.preventDefault();
+      const id = document.getElementById('subj-id').value;
+      const name = document.getElementById('subj-name').value.trim();
+      const code = (document.getElementById('subj-code') && document.getElementById('subj-code').value.trim()) || '';
+      const attended = parseInt(document.getElementById('subj-attended').value) || 0;
+      const total = parseInt(document.getElementById('subj-total').value) || 0;
+      const targetVal = document.getElementById('subj-target').value;
+      const type = (document.getElementById('subj-type') && document.getElementById('subj-type').value) || 'theory';
+
+      if (!name) return;
+
+      if (id) {
+        const subj = appState.subjects.find(s => s.id === id);
+        if (subj) {
+          subj.name = name;
+          subj.code = code;
+          subj.attended = attended;
+          subj.total = total;
+          subj.target = targetVal ? parseInt(targetVal) : null;
+          subj.type = type;
+        }
+      } else {
+        appState.subjects.push({
+          id: Date.now().toString(),
+          name,
+          code,
+          attended,
+          total,
+          target: targetVal ? parseInt(targetVal) : null,
+          type
+        });
+      }
+
+      closeSubjectModal();
+      triggerPencilRefresh(400);
+      saveAppState();
+      showToast('Subject updated.');
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value.trim();
+      const errBox = document.getElementById('auth-error-msg');
+      const card = document.getElementById('auth-card');
+
+      if (u === '115652' && p === 'priyanshu01') {
+        appState.isAuthenticated = true;
+        saveAppState();
+        errBox.classList.add('hidden');
+        showToast('Login Successful! Welcome.');
+        checkAuthUI();
+      } else {
+        errBox.classList.remove('hidden');
+        if (card) {
+          card.classList.remove('auth-shake');
+          void card.offsetWidth;
+          card.classList.add('auth-shake');
+        }
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const pwd = document.getElementById('login-password');
+      const icon = document.getElementById('pwd-eye-icon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'fa-solid fa-unlock text-xs text-black';
+      } else {
+        pwd.type = 'password';
+        icon.className = 'fa-solid fa-lock text-xs text-black';
+      }
+    }
+
+    function checkAuthUI() {
+      const authScreen = document.getElementById('auth-screen');
+      const mainApp = document.getElementById('app-container');
+      
+      if (appState.isAuthenticated) {
+        if (authScreen) authScreen.classList.add('hidden');
+        if (mainApp) mainApp.classList.remove('opacity-0');
+      } else {
+        if (authScreen) authScreen.classList.remove('hidden');
+        if (mainApp) mainApp.classList.add('opacity-0');
+      }
+    }
+
+    function handleLogout() {
+      appState.isAuthenticated = false;
+      saveAppState();
+      checkAuthUI();
+      showToast('Logged out.');
+    }
+
+    function initTheme() {
+      const toggleCheckbox = document.getElementById('theme-toggle-checkbox');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = appState.darkMode !== undefined ? appState.darkMode : prefersDark;
+      setThemeMode(isDark);
+      if (toggleCheckbox) toggleCheckbox.checked = isDark;
+    }
+
+    function handleThemeToggle(checked) {
+      setThemeMode(checked);
+      appState.darkMode = checked;
+      saveAppState();
+      showToast(checked ? "Night Mode Active 🌙" : "Day Mode Active ☀️");
+    }
+
+    function setThemeMode(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+      const targetSec = document.getElementById(`sec-${pageId}`);
+      if (targetSec) targetSec.classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-beige-900', 'text-white', 'dark:bg-accentGold', 'dark:text-black', 'shadow-xs');
+        btn.classList.add('text-beige-700', 'dark:text-gray-300');
+      });
+
+      const activeNavBtn = document.getElementById(`nav-${pageId}`);
+      if (activeNavBtn) {
+        activeNavBtn.classList.remove('text-beige-700', 'dark:text-gray-300');
+        activeNavBtn.classList.add('bg-beige-900', 'text-white', 'dark:bg-accentGold', 'dark:text-black', 'shadow-xs');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function handleSearchFilter(query) {
+      searchQuery = (query || '').toLowerCase().trim();
+      renderDashboard();
+      renderBunkManager();
+    }
+
+    function calculateSubjectStats(subj) {
+      const target = subj.target || appState.globalTarget || 75;
+      const attended = Number(subj.attended) || 0;
+      const total = Number(subj.total) || 0;
+      const pct = total > 0 ? (attended / total) * 100 : 0;
+      
+      let safeBunks = 0;
+      let mustAttend = 0;
+
+      if (pct >= target) {
+        safeBunks = Math.floor((attended * 100 - target * total) / target);
+        if (safeBunks < 0) safeBunks = 0;
+      } else {
+        mustAttend = Math.ceil((target * total - 100 * attended) / (100 - target));
+        if (mustAttend < 0) mustAttend = 0;
+      }
+
+      return {
+        pct: parseFloat(pct.toFixed(1)),
+        target,
+        safeBunks,
+        mustAttend,
+        isSafe: pct >= target
+      };
+    }
+
+    function renderApp() {
+      const targetElem = document.getElementById('display-target-perc');
+      const matrixTargetElem = document.getElementById('matrix-target-pct');
+      const inputThreshold = document.getElementById('target-threshold-input');
+
+      if (targetElem) targetElem.innerText = `${appState.globalTarget}%`;
+      if (matrixTargetElem) matrixTargetElem.innerText = `${appState.globalTarget}%`;
+      if (inputThreshold) inputThreshold.value = appState.globalTarget;
+
+      renderDashboard();
+      renderBunkManager();
+      renderSimulationOptions();
+      renderTimetable();
+      renderPlainEnglishBanner();
+      populateMedicalLeaveSubjects();
+    }
+
+    function renderPlainEnglishBanner() {
+      const textElem = document.getElementById('plain-english-text');
+      const badgeElem = document.getElementById('exam-badge');
+      const iconElem = document.getElementById('status-symbol-icon');
+      if (!textElem || !badgeElem) return;
+
+      let grandAttended = 0;
+      let grandTotal = 0;
+      let shortSubjects = [];
+      let totalSafeBunks = 0;
+
+      (appState.subjects || []).forEach(subj => {
+        const stats = calculateSubjectStats(subj);
+        grandAttended += Number(subj.attended);
+        grandTotal += Number(subj.total);
+        if (!stats.isSafe) {
+          shortSubjects.push(`${subj.name} (${stats.pct}%)`);
+        } else {
+          totalSafeBunks += stats.safeBunks;
+        }
+      });
+
+      const overallPct = grandTotal > 0 ? ((grandAttended / grandTotal) * 100).toFixed(1) : 0;
+
+      if (shortSubjects.length > 0) {
+        badgeElem.className = 'px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-terracotta text-white border border-black';
+        badgeElem.innerText = 'ATTENDANCE RISK';
+        if (iconElem) iconElem.innerText = '⚠️';
+        textElem.innerHTML = `<span class="font-bold text-terracotta">Attention:</span> Below 75% in <b>${shortSubjects.join(', ')}</b>. Attend upcoming classes to avoid shortage penalty.`;
+      } else {
+        badgeElem.className = 'px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-olive text-white border border-black';
+        badgeElem.innerText = 'EXAM ELIGIBLE';
+        if (iconElem) iconElem.innerText = '🛡️';
+        textElem.innerHTML = `<span class="font-bold text-olive">All clear!</span> Overall BCA attendance is <b>${overallPct}%</b>. You have a total buffer of <b>${totalSafeBunks} safe bunks</b> across subjects.`;
+      }
+    }
+
+    function renderDashboard() {
+      let grandAttended = 0;
+      let grandTotal = 0;
+      let totalSafeBunks = 0;
+      let totalMustAttend = 0;
+
+      const container = document.getElementById('subject-cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const filteredSubjects = (appState.subjects || []).filter(subj => {
+        if (!searchQuery) return true;
+        return subj.name.toLowerCase().includes(searchQuery) || (subj.code && subj.code.toLowerCase().includes(searchQuery));
+      });
+
+      if (filteredSubjects.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full p-8 text-center bg-white dark:bg-darkBg-card rounded-2xl border-2 border-dashed border-black/20 dark:border-gray-700">
+            <i class="fa-solid fa-magnifying-glass text-xl text-beige-400 mb-2"></i>
+            <p class="font-bold text-sm text-beige-800 dark:text-gray-200">No matching subjects found</p>
+          </div>
+        `;
+      }
+
+      (appState.subjects || []).forEach(subj => {
+        const stats = calculateSubjectStats(subj);
+        grandAttended += Number(subj.attended);
+        grandTotal += Number(subj.total);
+        totalSafeBunks += stats.safeBunks;
+        totalMustAttend += stats.mustAttend;
+      });
+
+      filteredSubjects.forEach(subj => {
+        const stats = calculateSubjectStats(subj);
+        const card = document.createElement('div');
+        card.className = `bg-white dark:bg-darkBg-card rounded-2xl p-5 border-2 ${!stats.isSafe ? 'border-terracotta' : 'border-black dark:border-darkBg-border'} flex flex-col justify-between space-y-4 shadow-brutal`;
+        
+        const typeBadge = subj.type === 'lab' 
+          ? '<span class="text-[9px] font-extrabold uppercase tracking-wider bg-purple-100 text-purple-800 px-2 py-0.5 rounded border border-purple-300">Lab</span>' 
+          : '<span class="text-[9px] font-extrabold uppercase tracking-wider bg-beige-200 dark:bg-gray-800 text-beige-800 dark:text-gray-300 px-2 py-0.5 rounded border border-black/10">Theory</span>';
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-1.5 mb-1">
+                  ${typeBadge}
+                  <span class="text-[10px] font-extrabold text-beige-500 dark:text-gray-400 uppercase">${subj.code || 'BCA'}</span>
+                </div>
+                <h4 class="font-display text-base font-bold text-beige-900 dark:text-white leading-snug">${subj.name}</h4>
+              </div>
+              <div class="flex items-center space-x-1">
+                <button onclick="editSubject('${subj.id}')" class="text-beige-500 hover:text-black dark:hover:text-white p-1" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
+                <button onclick="deleteSubject('${subj.id}')" class="text-beige-500 hover:text-terracotta p-1" title="Delete"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-baseline justify-between">
+              <span class="font-display text-3xl font-extrabold ${stats.isSafe ? 'text-beige-900 dark:text-white' : 'text-terracotta'}">${stats.pct}%</span>
+              <span class="text-xs font-bold text-beige-600 dark:text-gray-400">${subj.attended} / ${subj.total} attended</span>
+            </div>
+
+            <div class="w-full bg-beige-200 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden mt-2 border border-black/10">
+              <div class="h-full ${stats.isSafe ? 'bg-olive' : 'bg-terracotta'} transition-all duration-300" style="width: ${Math.min(stats.pct, 100)}%"></div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t-2 border-black/5 dark:border-gray-800 flex items-center justify-between text-xs">
+            <span class="font-extrabold ${stats.isSafe ? 'text-olive' : 'text-terracotta'}">
+              ${stats.isSafe ? `🟢 Bunk next ${stats.safeBunks}` : `🔴 Attend next ${stats.mustAttend}`}
+            </span>
+            <div class="flex items-center space-x-1.5">
+              <button onclick="quickUpdateAttendance('${subj.id}', -1)" class="w-8 h-8 rounded-lg bg-beige-100 dark:bg-gray-800 hover:bg-beige-200 text-black dark:text-white font-extrabold border-2 border-black/20">-</button>
+              <button onclick="quickUpdateAttendance('${subj.id}', 1)" class="w-8 h-8 rounded-lg bg-accentGold text-black font-extrabold border-2 border-black hover:bg-accentGold-light shadow-[1px_1px_0px_#000]">+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      const overallPct = grandTotal > 0 ? ((grandAttended / grandTotal) * 100).toFixed(1) : 0;
+      document.getElementById('stat-overall-pct').innerText = `${overallPct}%`;
+      document.getElementById('stat-bunks-left').innerText = totalSafeBunks;
+      document.getElementById('stat-must-attend').innerText = totalMustAttend;
+      document.getElementById('stat-total-held').innerText = grandTotal;
+      document.getElementById('stat-total-breakdown').innerText = `${grandAttended} Attended / ${grandTotal - grandAttended} Missed`;
+
+      const overallDesc = document.getElementById('stat-overall-desc');
+      if (overallDesc) {
+        if (overallPct >= appState.globalTarget) {
+          overallDesc.className = 'text-xs text-olive font-extrabold mt-4 flex items-center';
+          overallDesc.innerHTML = `<i class="fa-solid fa-circle-check mr-1.5"></i> Above your ${appState.globalTarget}% goal`;
+        } else {
+          overallDesc.className = 'text-xs text-terracotta font-extrabold mt-4 flex items-center';
+          overallDesc.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Below your ${appState.globalTarget}% goal`;
+        }
+      }
+    }
+
+    function renderBunkManager() {
+      const tbody = document.getElementById('bunk-matrix-body');
+      const criticalList = document.getElementById('critical-subject-list');
+      const safeList = document.getElementById('safe-subject-list');
+      if (!tbody || !criticalList || !safeList) return;
+
+      tbody.innerHTML = '';
+      criticalList.innerHTML = '';
+      safeList.innerHTML = '';
+
+      let hasCritical = false;
+      let hasSafe = false;
+
+      const filtered = (appState.subjects || []).filter(subj => {
+        if (!searchQuery) return true;
+        return subj.name.toLowerCase().includes(searchQuery) || (subj.code && subj.code.toLowerCase().includes(searchQuery));
+      });
+
+      filtered.forEach(subj => {
+        const stats = calculateSubjectStats(subj);
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-beige-100/60 dark:hover:bg-darkBg-muted transition-colors font-medium';
+        tr.innerHTML = `
+          <td class="py-3 px-3">
+            <div class="font-bold text-beige-900 dark:text-white">${subj.name}</div>
+            <div class="text-[10px] text-beige-500 dark:text-gray-400 uppercase font-semibold">${subj.code || 'BCA'} &bull; ${subj.type}</div>
+          </td>
+          <td class="py-3 px-3 text-center font-mono font-bold">${subj.attended} / ${subj.total}</td>
+          <td class="py-3 px-3 text-center font-display font-extrabold text-sm ${stats.isSafe ? 'text-beige-900 dark:text-white' : 'text-terracotta'}">${stats.pct}%</td>
+          <td class="py-3 px-3 text-center">
+            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${stats.isSafe ? 'bg-olive/15 text-olive border border-olive/30' : 'bg-terracotta/15 text-terracotta border border-terracotta/30'}">
+              ${stats.isSafe ? 'Safe' : 'Shortage'}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-center font-bold ${stats.isSafe ? 'text-olive' : 'text-terracotta'}">
+            ${stats.isSafe ? `Can bunk <b>${stats.safeBunks}</b> classes` : `Must attend <b>${stats.mustAttend}</b> classes`}
+          </td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="logAttendanceEvent('${subj.id}', true)" class="px-2.5 py-1 bg-accentGold text-black font-extrabold rounded-lg border-2 border-black hover:bg-accentGold-light mr-1 shadow-[1px_1px_0px_#000]">+ Present</button>
+            <button onclick="logAttendanceEvent('${subj.id}', false)" class="px-2.5 py-1 bg-terracotta text-white font-extrabold rounded-lg hover:opacity-90 border-2 border-black shadow-[1px_1px_0px_#000]">+ Bunk</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        if (!stats.isSafe) {
+          hasCritical = true;
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between bg-terracotta/10 p-2.5 rounded-xl border border-terracotta/20 font-semibold';
+          li.innerHTML = `<span>${subj.name}</span> <span class="font-extrabold text-terracotta">Need ${stats.mustAttend} classes</span>`;
+          criticalList.appendChild(li);
+        } else if (stats.safeBunks > 0) {
+          hasSafe = true;
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between bg-olive/10 p-2.5 rounded-xl border border-olive/20 font-semibold';
+          li.innerHTML = `<span>${subj.name}</span> <span class="font-extrabold text-olive">Can bunk ${stats.safeBunks} classes</span>`;
+          safeList.appendChild(li);
+        }
+      });
+
+      if (!hasCritical) criticalList.innerHTML = '<li class="text-beige-500 dark:text-gray-400 italic">No attendance shortage in any subject. All safe!</li>';
+      if (!hasSafe) safeList.innerHTML = '<li class="text-beige-500 dark:text-gray-400 italic">No extra bunks to spare right now. Keep attending.</li>';
+    }
+
+    function renderSimulationOptions() {
+      const select = document.getElementById('sim-subject-select');
+      if (!select) return;
+
+      select.innerHTML = '';
+      (appState.subjects || []).forEach(subj => {
+        const opt = document.createElement('option');
+        opt.value = subj.id;
+        opt.innerText = `${subj.name} (${subj.attended}/${subj.total})`;
+        select.appendChild(opt);
+      });
+
+      if (appState.subjects && appState.subjects.length > 0) runSimulation();
+    }
+
+    function runSimulation() {
+      const selectElem = document.getElementById('sim-subject-select');
+      if (!selectElem) return;
+      const subjId = selectElem.value;
+      const subj = (appState.subjects || []).find(s => s.id === subjId);
+      if (!subj) return;
+
+      document.getElementById('sim-current-attended').value = subj.attended;
+      document.getElementById('sim-current-total').value = subj.total;
+
+      const attendAdd = parseInt(document.getElementById('sim-attend-next').value) || 0;
+      const bunkAdd = parseInt(document.getElementById('sim-bunk-next').value) || 0;
+
+      document.getElementById('sim-attend-next-val').innerText = attendAdd;
+      document.getElementById('sim-bunk-next-val').innerText = bunkAdd;
+
+      const newAttended = Number(subj.attended) + attendAdd;
+      const newTotal = Number(subj.total) + attendAdd + bunkAdd;
+
+      const currentPct = subj.total > 0 ? ((subj.attended / subj.total) * 100).toFixed(1) : 0;
+      const projectedPct = newTotal > 0 ? ((newAttended / newTotal) * 100).toFixed(1) : 0;
+      const diff = (projectedPct - currentPct).toFixed(1);
+
+      document.getElementById('sim-current-pct-label').innerText = `${currentPct}%`;
+      document.getElementById('sim-projected-pct').innerText = `${projectedPct}%`;
+      document.getElementById('sim-new-attended').innerText = newAttended;
+      document.getElementById('sim-new-total').innerText = newTotal;
+
+      const diffLabel = document.getElementById('sim-diff-pct');
+      if (diff >= 0) {
+        diffLabel.innerText = `+${diff}%`;
+        diffLabel.className = 'font-extrabold text-base text-olive-light';
+      } else {
+        diffLabel.innerText = `${diff}%`;
+        diffLabel.className = 'font-extrabold text-base text-terracotta-light';
+      }
+
+      const badge = document.getElementById('sim-status-badge');
+      const adviceBox = document.getElementById('sim-advice-box');
+      const target = subj.target || appState.globalTarget;
+
+      if (projectedPct >= target) {
+        badge.innerText = 'SAFE SCENARIO';
+        badge.className = 'px-3 py-1 text-xs rounded-full bg-olive text-white font-extrabold';
+        adviceBox.innerHTML = `🌟 Attendance for <b>${subj.name}</b> projected at <b>${projectedPct}%</b> (safe above your ${target}% requirement).`;
+      } else {
+        badge.innerText = 'SHORTAGE WARNING';
+        badge.className = 'px-3 py-1 text-xs rounded-full bg-terracotta text-white font-extrabold';
+        adviceBox.innerHTML = `⚠️ This scenario drops attendance to <b>${projectedPct}%</b>, putting you below your college's ${target}% rule.`;
+      }
+    }
+
+    function setDayFilter(day) {
+      selectedDayFilter = day;
+      document.querySelectorAll('.day-tab').forEach(tab => {
+        tab.classList.remove('bg-beige-900', 'text-white', 'dark:bg-accentGold', 'dark:text-black', 'active');
+        tab.classList.add('text-beige-700', 'dark:text-gray-300');
+      });
+      if (event && event.target) {
+        event.target.classList.remove('text-beige-700', 'dark:text-gray-300');
+        event.target.classList.add('bg-beige-900', 'text-white', 'dark:bg-accentGold', 'dark:text-black', 'active');
+      }
+      const dayLabel = document.getElementById('current-selected-day');
+      if (dayLabel) dayLabel.innerText = day;
+      renderTimetable();
+    }
+
+    function renderTimetable() {
+      const list = document.getElementById('schedule-list');
+      const quickLogList = document.getElementById('quick-log-subject-list');
+      if (!list || !quickLogList) return;
+
+      list.innerHTML = '';
+      quickLogList.innerHTML = '';
+
+      const daySlots = (appState.schedule || []).filter(s => s.day === selectedDayFilter);
+
+      if (daySlots.length === 0) {
+        list.innerHTML = '<div class="bg-white dark:bg-darkBg-card p-6 rounded-2xl text-center text-beige-500 dark:text-gray-400 text-xs italic border-2 border-dashed border-black/20 dark:border-gray-800">No scheduled classes for this day. Click "+ Add Time Slot" to add classes.</div>';
+      } else {
+        daySlots.forEach(slot => {
+          const subj = (appState.subjects || []).find(s => s.id === slot.subjectId);
+          if (!subj) return;
+
+          const stats = calculateSubjectStats(subj);
+
+          const div = document.createElement('div');
+          div.className = 'bg-white dark:bg-darkBg-card p-4 rounded-2xl flex items-center justify-between border-2 border-black dark:border-darkBg-border shadow-brutal-sm';
+          div.innerHTML = `
+            <div>
+              <span class="text-[10px] text-beige-500 dark:text-gray-400 font-extrabold uppercase tracking-wider">${slot.time} &bull; ${slot.room || 'Room TBA'}</span>
+              <h4 class="font-display text-base font-bold text-beige-900 dark:text-white">${subj.name}</h4>
+              <span class="text-[10px] font-bold ${stats.isSafe ? 'text-olive' : 'text-terracotta'}">${stats.pct}% Attendance (${stats.isSafe ? `${stats.safeBunks} safe bunks left` : `Need ${stats.mustAttend} classes`})</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button onclick="logAttendanceEvent('${subj.id}', true)" class="px-3 py-1.5 bg-accentGold text-black font-extrabold text-xs rounded-xl border-2 border-black hover:bg-accentGold-light shadow-brutal-sm">+ Present</button>
+              <button onclick="logAttendanceEvent('${subj.id}', false)" class="px-3 py-1.5 bg-terracotta text-white font-extrabold text-xs rounded-xl hover:opacity-90 border-2 border-black shadow-brutal-sm">+ Bunk</button>
+              <button onclick="deleteScheduleSlot('${slot.id}')" class="text-beige-400 hover:text-terracotta p-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      (appState.subjects || []).forEach(subj => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between p-2.5 rounded-xl bg-beige-50 dark:bg-darkBg-muted border border-black/10 dark:border-gray-800';
+        item.innerHTML = `
+          <span class="font-bold text-beige-900 dark:text-white truncate max-w-[130px]">${subj.name}</span>
+          <div class="flex items-center space-x-1.5">
+            <button onclick="logAttendanceEvent('${subj.id}', true)" class="px-2 py-1 bg-accentGold text-black font-extrabold rounded-lg text-[11px] border border-black hover:bg-accentGold-light">+ Present</button>
+            <button onclick="logAttendanceEvent('${subj.id}', false)" class="px-2 py-1 bg-terracotta/20 text-terracotta font-extrabold rounded-lg text-[11px] border border-terracotta hover:bg-terracotta/30">+ Bunk</button>
+          </div>
+        `;
+        quickLogList.appendChild(item);
+      });
+    }
+
+    function logAttendanceEvent(subjId, attended) {
+      const subj = (appState.subjects || []).find(s => s.id === subjId);
+      if (subj) {
+        subj.total = Number(subj.total) + 1;
+        if (attended) subj.attended = Number(subj.attended) + 1;
+        saveAppState();
+        showToast(attended ? `Marked attended: ${subj.name}` : `Marked bunked: ${subj.name}`);
+      }
+    }
+
+    function quickUpdateAttendance(subjId, delta) {
+      const subj = (appState.subjects || []).find(s => s.id === subjId);
+      if (subj) {
+        subj.attended = Math.max(0, Number(subj.attended) + delta);
+        if (delta > 0 && subj.attended > subj.total) subj.total = subj.attended;
+        saveAppState();
+      }
+    }
+
+    function openAddSubjectModal() {
+      document.getElementById('subj-id').value = '';
+      document.getElementById('subj-name').value = '';
+      document.getElementById('subj-attended').value = '0';
+      document.getElementById('subj-total').value = '0';
+      document.getElementById('subj-target').value = '';
+      document.getElementById('modal-subject-title').innerText = 'Add BCA Subject';
+      document.getElementById('modal-subject').classList.remove('hidden');
+    }
+
+    function editSubject(subjId) {
+      const subj = (appState.subjects || []).find(s => s.id === subjId);
+      if (!subj) return;
+      document.getElementById('subj-id').value = subj.id;
+      document.getElementById('subj-name').value = subj.name;
+      document.getElementById('subj-attended').value = subj.attended;
+      document.getElementById('subj-total').value = subj.total;
+      document.getElementById('subj-target').value = subj.target || '';
+      document.getElementById('modal-subject-title').innerText = 'Edit Subject';
+      document.getElementById('modal-subject').classList.remove('hidden');
+    }
+
+    function closeSubjectModal() {
+      document.getElementById('modal-subject').classList.add('hidden');
+    }
+
+    function deleteSubject(subjId) {
+      appState.subjects = (appState.subjects || []).filter(s => s.id !== subjId);
+      appState.schedule = (appState.schedule || []).filter(s => s.subjectId !== subjId);
+      saveAppState();
+      showToast('Subject removed.');
+    }
+
+    function openAddScheduleModal() {
+      const select = document.getElementById('slot-subject-select');
+      select.innerHTML = '';
+      (appState.subjects || []).forEach(subj => {
+        const opt = document.createElement('option');
+        opt.value = subj.id;
+        opt.innerText = subj.name;
+        select.appendChild(opt);
+      });
+      document.getElementById('slot-day').value = selectedDayFilter;
+      document.getElementById('modal-schedule').classList.remove('hidden');
+    }
+
+    function closeScheduleModal() {
+      document.getElementById('modal-schedule').classList.add('hidden');
+    }
+
+    function saveScheduleSlot(e) {
+      e.preventDefault();
+      const day = document.getElementById('slot-day').value;
+      const subjectId = document.getElementById('slot-subject-select').value;
+      const time = document.getElementById('slot-time').value;
+      const room = document.getElementById('slot-room').value;
+
+      appState.schedule.push({
+        id: Date.now().toString(),
+        day,
+        subjectId,
+        time,
+        room
+      });
+
+      closeScheduleModal();
+      saveAppState();
+      showToast('Routine lecture added.');
+    }
+
+    function deleteScheduleSlot(slotId) {
+      appState.schedule = (appState.schedule || []).filter(s => s.id !== slotId);
+      saveAppState();
+      showToast('Timetable slot deleted.');
+    }
+
+    function populateMedicalLeaveSubjects() {
+      const select = document.getElementById('med-subject-select');
+      if (!select) return;
+      select.innerHTML = '';
+      (appState.subjects || []).forEach(subj => {
+        const opt = document.createElement('option');
+        opt.value = subj.id;
+        opt.innerText = `${subj.name} (${subj.attended}/${subj.total})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function openMedicalLeaveModal() {
+      populateMedicalLeaveSubjects();
+      document.getElementById('modal-med-leave').classList.remove('hidden');
+    }
+
+    function closeMedicalLeaveModal() {
+      document.getElementById('modal-med-leave').classList.add('hidden');
+    }
+
+    function submitMedicalLeave() {
+      const subjId = document.getElementById('med-subject-select').value;
+      const count = parseInt(document.getElementById('med-count').value) || 1;
+      const subj = (appState.subjects || []).find(s => s.id === subjId);
+      if (subj) {
+        subj.attended = Number(subj.attended) + count;
+        subj.total = Number(subj.total) + count;
+        closeMedicalLeaveModal();
+        saveAppState();
+        showToast(`Added ${count} leave hours to ${subj.name}!`);
+      }
+    }
+
+    function saveTargetThreshold() {
+      const val = parseInt(document.getElementById('target-threshold-input').value);
+      if (val >= 40 && val <= 100) {
+        appState.globalTarget = val;
+        saveAppState();
+        showToast(`Target goal updated to ${val}%`);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      if (!toast || !toastMsg) return;
+
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Academia_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Exported JSON backup.');
+    }
+
+    function triggerImport() {
+      document.getElementById('import-file-input').click();
+    }
+
+    function importData(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (parsed && parsed.subjects) {
+            appState = parsed;
+            saveAppState();
+            initTheme();
+            showToast('Data imported successfully.');
+          }
+        } catch(err) {
+          showToast('Invalid JSON file format.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetAllData() {
+      appState = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
+      saveAppState();
+      initTheme();
+      showToast('Syllabus reset to default.');
+    }
+
+    function initApp() {
+      initTheme();
+      renderApp();
+      
+      const splashProgress = document.getElementById('splash-progress-bar');
+      if (splashProgress) {
+        setTimeout(() => { splashProgress.style.width = '100%'; }, 50);
+      }
+
+      setTimeout(() => {
+        dismissLoader();
+        checkAuthUI();
+      }, 700);
+
+      // Failsafe: Ensure loader always hides within 1.5s under any condition
+      setTimeout(() => {
+        dismissLoader();
+        checkAuthUI();
+      }, 1500);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+  </script>
+</body>
+</html>

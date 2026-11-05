@@ -270,9 +270,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <p>
                 Enrolled Course: <b className="text-black dark:text-white">{user.course || 'General'}</b>
               </p>
-              <p>
-                Database Status: <b className="text-olive">Per-Student Isolated Cloud DB</b>
-              </p>
+              <div className="pt-1 space-y-1">
+                <div className="flex items-center gap-1.5 text-[11px] text-olive font-extrabold">
+                  <i className="fa-solid fa-shield-halved"></i>
+                  <span>Persistence Vault: Active</span>
+                </div>
+                <p className="text-[10px] text-beige-500 dark:text-gray-400">
+                  Data safely retained on this device across server sleep &amp; container restarts.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -289,6 +295,55 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             >
               <i className="fa-solid fa-user-plus mr-1.5"></i> Register / Switch Account
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Data Persistence & Longevity Banner */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-darkBg-card dark:to-darkBg-muted border-2 border-accentGold/60 rounded-2xl p-5 shadow-brutal space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-accentGold text-black flex items-center justify-center font-black text-sm border-2 border-black shadow-brutal-sm">
+            <i className="fa-solid fa-database"></i>
+          </div>
+          <div>
+            <h3 className="font-display text-base font-black text-beige-900 dark:text-white">
+              Data Persistence &amp; Auto-Reconnection Active
+            </h3>
+            <p className="text-xs text-beige-700 dark:text-gray-300 font-medium">
+              Your registered roll number and attendance logbook are protected against server sleeps and browser restarts.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+          <div className="p-3 bg-white/80 dark:bg-darkBg-card rounded-xl border border-black/10 dark:border-gray-700">
+            <div className="font-bold text-black dark:text-white flex items-center gap-1.5 mb-1">
+              <i className="fa-solid fa-lock text-olive"></i>
+              <span>Local Persistent Vault</span>
+            </div>
+            <p className="text-[11px] text-beige-600 dark:text-gray-400">
+              Saved in your browser storage. If the server sleeps or restarts after 15 minutes or 1 year, your session re-syncs automatically.
+            </p>
+          </div>
+
+          <div className="p-3 bg-white/80 dark:bg-darkBg-card rounded-xl border border-black/10 dark:border-gray-700">
+            <div className="font-bold text-black dark:text-white flex items-center gap-1.5 mb-1">
+              <i className="fa-solid fa-file-export text-accentGold"></i>
+              <span>Offline JSON Backups</span>
+            </div>
+            <p className="text-[11px] text-beige-600 dark:text-gray-400">
+              Use the "Export JSON" button above anytime to keep an offline copy of your subjects and routine on your device.
+            </p>
+          </div>
+
+          <div className="p-3 bg-white/80 dark:bg-darkBg-card rounded-xl border border-black/10 dark:border-gray-700">
+            <div className="font-bold text-black dark:text-white flex items-center gap-1.5 mb-1">
+              <i className="fa-solid fa-cloud text-blue-500"></i>
+              <span>Cross-Device Cloud Sync</span>
+            </div>
+            <p className="text-[11px] text-beige-600 dark:text-gray-400">
+              Supports Supabase / PostgreSQL. Add <code className="font-mono text-[10px] bg-black/5 dark:bg-white/10 px-1 py-0.5 rounded">SUPABASE_URL</code> to Render to sync across any device anywhere.
+            </p>
           </div>
         </div>
       </div>

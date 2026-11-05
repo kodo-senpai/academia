@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { UserProfile, Subject, ScheduleSlot } from './types';
 import { api, getStoredToken } from './services/api';
+import { getActiveVault } from './services/vault';
 import { PencilLoader } from './components/PencilLoader';
 import { AuthScreen } from './components/AuthScreen';
 import { Navbar } from './components/Navbar';
@@ -80,6 +81,8 @@ export default function App() {
     }
 
     const token = getStoredToken();
+    const activeVault = getActiveVault();
+
     if (token) {
       api
         .getMe()
@@ -87,8 +90,29 @@ export default function App() {
           setUser(res.user);
           return loadUserData();
         })
-        .catch(() => {
+        .catch(async () => {
+          if (activeVault) {
+            try {
+              const res = await api.rehydrate({ roll_number: activeVault.roll_number, vault: activeVault });
+              setUser(res.user);
+              await loadUserData();
+              return;
+            } catch {}
+          }
           api.logout();
+          setUser(null);
+        })
+        .finally(() => {
+          setTimeout(() => setLoaderVisible(false), 500);
+        });
+    } else if (activeVault) {
+      // Auto-reconnect active session from local student vault across cold boots
+      api.rehydrate({ roll_number: activeVault.roll_number, vault: activeVault })
+        .then((res) => {
+          setUser(res.user);
+          return loadUserData();
+        })
+        .catch(() => {
           setUser(null);
         })
         .finally(() => {

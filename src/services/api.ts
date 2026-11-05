@@ -1,4 +1,15 @@
 import { UserProfile, Subject, ScheduleSlot, AttendanceLog } from '../types';
+import {
+  saveStudentVault,
+  getStudentVault,
+  getActiveVault,
+  updateVaultSubjects,
+  updateVaultSchedule,
+  updateVaultProfile,
+  deleteStudentVault,
+  setActiveRoll,
+  StudentVault,
+} from './vault';
 
 const TOKEN_KEY = 'academia_auth_token';
 
@@ -33,7 +44,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.error || `Request failed with status ${response.status}`);
+    const error: any = new Error(data.error || `Request failed with status ${response.status}`);
+    error.status = response.status;
+    error.code = data.code;
+    error.roll_number = data.roll_number;
+    throw error;
   }
 
   return data as T;
@@ -48,11 +63,21 @@ export const api = {
     course?: string;
     load_default_syllabus?: boolean;
   }): Promise<{ token: string; user: UserProfile; message: string }> {
-    const res = await request<{ token: string; user: UserProfile; message: string }>('/api/auth/register', {
+    const res = await request<{ token: string; user: UserProfile; vault_hash?: string; message: string }>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     });
     setStoredToken(res.token);
+    saveStudentVault({
+      id: res.user.id,
+      roll_number: res.user.roll_number,
+      full_name: res.user.full_name,
+      course: res.user.course,
+      global_target: res.user.global_target,
+      vault_hash: res.vault_hash,
+      subjects: [],
+      schedule: [],
+    });
     return res;
   },
 
@@ -60,20 +85,88 @@ export const api = {
     roll_number: string;
     password: string;
   }): Promise<{ token: string; user: UserProfile; message: string }> {
-    const res = await request<{ token: string; user: UserProfile; message: string }>('/api/auth/login', {
+    try {
+      const res = await request<{ token: string; user: UserProfile; vault_hash?: string; message: string }>('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      setStoredToken(res.token);
+      saveStudentVault({
+        id: res.user.id,
+        roll_number: res.user.roll_number,
+        full_name: res.user.full_name,
+        course: res.user.course,
+        global_target: res.user.global_target,
+        vault_hash: res.vault_hash,
+      });
+      return res;
+    } catch (err: any) {
+      // If server cold-started (e.g. Render/Cloud Run spin down), check if we have a local vault on this device
+      const vault = getStudentVault(data.roll_number);
+      if (vault) {
+        try {
+          const rehydrated = await api.rehydrate({
+            roll_number: data.roll_number,
+            password: data.password,
+            vault,
+          });
+          return rehydrated;
+        } catch {
+          throw err;
+        }
+      }
+      throw err;
+    }
+  },
+
+  // Auto-restore student session and registers across cold container boots
+  async rehydrate(data: {
+    roll_number: string;
+    password?: string;
+    vault: StudentVault;
+  }): Promise<{ token: string; user: UserProfile; message: string }> {
+    const res = await request<{ token: string; user: UserProfile; vault_hash?: string; message: string }>('/api/auth/rehydrate', {
       method: 'POST',
       body: JSON.stringify(data),
     });
     setStoredToken(res.token);
+    saveStudentVault({
+      id: res.user.id,
+      roll_number: res.user.roll_number,
+      full_name: res.user.full_name,
+      course: res.user.course,
+      global_target: res.user.global_target,
+      vault_hash: res.vault_hash,
+      subjects: data.vault.subjects,
+      schedule: data.vault.schedule,
+    });
     return res;
   },
 
   logout() {
     setStoredToken(null);
+    setActiveRoll(null);
   },
 
   async getMe(): Promise<{ user: UserProfile }> {
-    return request<{ user: UserProfile }>('/api/auth/me');
+    try {
+      return await request<{ user: UserProfile }>('/api/auth/me');
+    } catch (err: any) {
+      // If server rebooted, auto-rehydrate session transparently from active vault
+      const activeVault = getActiveVault();
+      if (activeVault) {
+        try {
+          const rehydrated = await api.rehydrate({
+            roll_number: activeVault.roll_number,
+            vault: activeVault,
+          });
+          return { user: rehydrated.user };
+        } catch {
+          throw err;
+        }
+      }
+      throw err;
+    }
   },
 
   async updateProfile(data: {
@@ -81,15 +174,25 @@ export const api = {
     full_name?: string;
     course?: string;
   }): Promise<{ user: UserProfile }> {
-    return request<{ user: UserProfile }>('/api/profile', {
+    const res = await request<{ user: UserProfile }>('/api/profile', {
       method: 'PUT',
       body: JSON.stringify(data),
     });
+    const active = getActiveVault();
+    if (active) {
+      updateVaultProfile(active.roll_number, data);
+    }
+    return res;
   },
 
   // Subjects
   async getSubjects(): Promise<{ subjects: Subject[] }> {
-    return request<{ subjects: Subject[] }>('/api/subjects');
+    const res = await request<{ subjects: Subject[] }>('/api/subjects');
+    const active = getActiveVault();
+    if (active && res.subjects) {
+      updateVaultSubjects(active.roll_number, res.subjects);
+    }
+    return res;
   },
 
   async createSubject(data: {
@@ -152,7 +255,12 @@ export const api = {
 
   // Schedule / Timetable
   async getSchedule(): Promise<{ schedule: ScheduleSlot[] }> {
-    return request<{ schedule: ScheduleSlot[] }>('/api/schedule');
+    const res = await request<{ schedule: ScheduleSlot[] }>('/api/schedule');
+    const active = getActiveVault();
+    if (active && res.schedule) {
+      updateVaultSchedule(active.roll_number, res.schedule);
+    }
+    return res;
   },
 
   async addScheduleSlot(data: {
@@ -186,16 +294,26 @@ export const api = {
   },
 
   async clearUserData(): Promise<{ success: boolean; message: string }> {
-    return request<{ success: boolean; message: string }>('/api/user/data', {
+    const res = await request<{ success: boolean; message: string }>('/api/user/data', {
       method: 'DELETE',
     });
+    const active = getActiveVault();
+    if (active) {
+      updateVaultSubjects(active.roll_number, []);
+      updateVaultSchedule(active.roll_number, []);
+    }
+    return res;
   },
 
   async deleteAccount(): Promise<{ success: boolean; message: string }> {
+    const active = getActiveVault();
     const res = await request<{ success: boolean; message: string }>('/api/user/account', {
       method: 'DELETE',
     });
     setStoredToken(null);
+    if (active) {
+      deleteStudentVault(active.roll_number);
+    }
     return res;
   },
 

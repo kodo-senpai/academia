@@ -44,7 +44,11 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
     // Verify user still exists in database
     const userRow = db.prepare('SELECT id, roll_number, full_name, course, global_target FROM profiles WHERE id = ?').get(decoded.id) as AuthUser | undefined;
     if (!userRow) {
-      res.status(401).json({ error: 'User profile no longer exists. Please re-login.' });
+      res.status(401).json({
+        error: 'User profile no longer in database. Rehydrating session...',
+        code: 'PROFILE_NOT_IN_DB',
+        roll_number: decoded.roll_number,
+      });
       return;
     }
 

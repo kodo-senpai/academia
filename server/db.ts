@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const DATA_DIR = path.resolve(process.cwd(), 'data');
 if (!fs.existsSync(DATA_DIR)) {
@@ -15,6 +16,123 @@ export const db = new DatabaseSync(DB_PATH);
 // Enable foreign keys and WAL mode for reliability
 db.exec('PRAGMA foreign_keys = ON;');
 db.exec('PRAGMA journal_mode = WAL;');
+
+// Initialize optional Supabase Cloud Client (if configured in Render / .env)
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase: SupabaseClient | null = (supabaseUrl && supabaseKey)
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+export async function syncFromSupabase() {
+  if (!supabase) return;
+  try {
+    console.log('[Academia] Connecting to Supabase Cloud Database...');
+    const { data: profiles, error: pErr } = await supabase.from('profiles').select('*');
+    if (!pErr && Array.isArray(profiles) && profiles.length > 0) {
+      const insertProfile = db.prepare(`
+        INSERT OR REPLACE INTO profiles (id, roll_number, full_name, password_hash, course, global_target, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      for (const p of profiles) {
+        insertProfile.run(
+          p.id,
+          p.roll_number,
+          p.full_name || 'Student',
+          p.password_hash || '',
+          p.course || 'Student',
+          p.global_target || 75,
+          p.created_at || new Date().toISOString(),
+          p.updated_at || new Date().toISOString()
+        );
+      }
+      console.log(`[Academia] Synced ${profiles.length} profiles from Supabase Cloud.`);
+    }
+
+    const { data: subjects, error: sErr } = await supabase.from('subjects').select('*');
+    if (!sErr && Array.isArray(subjects) && subjects.length > 0) {
+      const insertSubject = db.prepare(`
+        INSERT OR REPLACE INTO subjects (id, user_id, name, code, attended, total, target, type, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      for (const s of subjects) {
+        insertSubject.run(
+          s.id,
+          s.user_id,
+          s.name,
+          s.code || '',
+          s.attended || 0,
+          s.total || 0,
+          s.target || null,
+          s.type || 'theory',
+          s.created_at || new Date().toISOString(),
+          s.updated_at || new Date().toISOString()
+        );
+      }
+      console.log(`[Academia] Synced ${subjects.length} subjects from Supabase Cloud.`);
+    }
+  } catch (err: any) {
+    console.warn('[Academia] Supabase sync skipped:', err?.message);
+  }
+}
+
+export async function syncProfileToSupabase(profile: any) {
+  if (!supabase) return;
+  try {
+    await supabase.from('profiles').upsert({
+      id: profile.id,
+      roll_number: profile.roll_number,
+      full_name: profile.full_name,
+      password_hash: profile.password_hash,
+      course: profile.course,
+      global_target: profile.global_target,
+      updated_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.warn('Supabase profile sync warning:', err?.message);
+  }
+}
+
+export async function syncSubjectToSupabase(subject: any) {
+  if (!supabase) return;
+  try {
+    await supabase.from('subjects').upsert({
+      id: subject.id,
+      user_id: subject.user_id,
+      name: subject.name,
+      code: subject.code,
+      attended: subject.attended,
+      total: subject.total,
+      target: subject.target,
+      type: subject.type,
+      updated_at: new Date().toISOString(),
+    });
+  } catch (err: any) {
+    console.warn('Supabase subject sync warning:', err?.message);
+  }
+}
+
+export async function deleteSubjectFromSupabase(subjectId: string) {
+  if (!supabase) return;
+  try {
+    await supabase.from('subjects').delete().eq('id', subjectId);
+  } catch (err: any) {
+    console.warn('Supabase subject delete warning:', err?.message);
+  }
+}
+
+export async function deleteUserFromSupabase(userId: string) {
+  if (!supabase) return;
+  try {
+    await supabase.from('attendance_logs').delete().eq('user_id', userId);
+    await supabase.from('schedule').delete().eq('user_id', userId);
+    await supabase.from('subjects').delete().eq('user_id', userId);
+    await supabase.from('profiles').delete().eq('id', userId);
+  } catch (err: any) {
+    console.warn('Supabase user delete warning:', err?.message);
+  }
+}
 
 // Initialize Tables
 export function initDatabase() {

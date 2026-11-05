@@ -4,7 +4,16 @@ import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import { db, initDatabase, seedDefaultSyllabusForUser } from './server/db.js';
+import {
+  db,
+  initDatabase,
+  seedDefaultSyllabusForUser,
+  syncFromSupabase,
+  syncProfileToSupabase,
+  syncSubjectToSupabase,
+  deleteSubjectFromSupabase,
+  deleteUserFromSupabase,
+} from './server/db.js';
 import { requireAuth, generateToken, AuthenticatedRequest } from './server/auth.js';
 
 dotenv.config();
@@ -78,7 +87,15 @@ app.post('/api/auth/register', (req, res) => {
     };
 
     const token = generateToken(user);
-    res.status(201).json({ token, user, message: 'Account successfully created!' });
+    syncProfileToSupabase({
+      id: userId,
+      roll_number: trimmedRoll,
+      full_name: trimmedName,
+      password_hash: hash,
+      course: studentCourse,
+      global_target: 75,
+    });
+    res.status(201).json({ token, user, vault_hash: hash, message: 'Account successfully created!' });
   } catch (error: any) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed. ' + (error?.message || 'Server error') });
@@ -104,13 +121,13 @@ app.post('/api/auth/login', (req, res) => {
     `).get(trimmedRoll) as any;
 
     if (!userRow) {
-      res.status(401).json({ error: 'Invalid Roll Number or Password.' });
+      res.status(401).json({ error: 'Invalid Roll Number or Password.', code: 'USER_NOT_FOUND' });
       return;
     }
 
     const isMatch = bcrypt.compareSync(trimmedPass, userRow.password_hash);
     if (!isMatch) {
-      res.status(401).json({ error: 'Invalid Roll Number or Password.' });
+      res.status(401).json({ error: 'Invalid Roll Number or Password.', code: 'INVALID_PASSWORD' });
       return;
     }
 
@@ -123,10 +140,149 @@ app.post('/api/auth/login', (req, res) => {
     };
 
     const token = generateToken(user);
-    res.json({ token, user, message: 'Login successful!' });
+    res.json({ token, user, vault_hash: userRow.password_hash, message: 'Login successful!' });
   } catch (error: any) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed. ' + (error?.message || 'Server error') });
+  }
+});
+
+// Rehydrate / Auto-restore student account and logbook across cold container reboots
+app.post('/api/auth/rehydrate', (req, res) => {
+  try {
+    const { roll_number, password, vault } = req.body;
+    const trimmedRoll = (roll_number || vault?.roll_number || '').trim().toUpperCase();
+
+    if (!trimmedRoll || !vault) {
+      res.status(400).json({ error: 'Vault snapshot and Roll Number required for rehydration.' });
+      return;
+    }
+
+    // Check if user already exists in DB
+    let userRow = db.prepare('SELECT * FROM profiles WHERE UPPER(roll_number) = UPPER(?)').get(trimmedRoll) as any;
+
+    if (userRow) {
+      let isVerified = false;
+      if (password) {
+        isVerified = bcrypt.compareSync(password, userRow.password_hash);
+      } else if (vault.vault_hash && vault.vault_hash === userRow.password_hash) {
+        isVerified = true;
+      }
+
+      if (!isVerified) {
+        res.status(401).json({ error: 'Invalid password credentials for this account.' });
+        return;
+      }
+    } else {
+      // User is not in DB (container cold restart on Render/Cloud Run)
+      // Verify password against stored vault_hash
+      let isVerified = false;
+      if (password && vault.vault_hash) {
+        isVerified = bcrypt.compareSync(password, vault.vault_hash);
+      } else if (vault.vault_hash) {
+        isVerified = true;
+      } else if (password) {
+        isVerified = true;
+      }
+
+      if (!isVerified) {
+        res.status(401).json({ error: 'Invalid credentials. Could not restore profile.' });
+        return;
+      }
+
+      const userId = vault.id || crypto.randomUUID();
+      const now = new Date().toISOString();
+      const hash = vault.vault_hash || (password ? bcrypt.hashSync(password, 10) : bcrypt.hashSync('defaultpass', 10));
+
+      db.prepare(`
+        INSERT INTO profiles (id, roll_number, full_name, password_hash, course, global_target, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        userId,
+        trimmedRoll,
+        vault.full_name || 'Student',
+        hash,
+        vault.course || 'Student',
+        vault.global_target || 75,
+        now,
+        now
+      );
+
+      // Recreate all subjects from vault
+      if (Array.isArray(vault.subjects) && vault.subjects.length > 0) {
+        const insertSubject = db.prepare(`
+          INSERT INTO subjects (id, user_id, name, code, attended, total, target, type, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        for (const s of vault.subjects) {
+          if (s.name) {
+            insertSubject.run(
+              s.id || crypto.randomUUID(),
+              userId,
+              s.name,
+              s.code || '',
+              Math.max(0, parseInt(s.attended) || 0),
+              Math.max(0, parseInt(s.total) || 0),
+              s.target ? parseInt(s.target) : null,
+              s.type === 'lab' ? 'lab' : 'theory',
+              s.created_at || now,
+              now
+            );
+          }
+        }
+      }
+
+      // Recreate schedule from vault
+      if (Array.isArray(vault.schedule) && vault.schedule.length > 0) {
+        const insertSlot = db.prepare(`
+          INSERT INTO schedule (id, user_id, subject_id, day, time, room, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        for (const slot of vault.schedule) {
+          if (slot.subjectId && slot.day && slot.time) {
+            insertSlot.run(
+              slot.id || crypto.randomUUID(),
+              userId,
+              slot.subjectId,
+              slot.day,
+              slot.time,
+              slot.room || '',
+              slot.created_at || now
+            );
+          }
+        }
+      }
+
+      userRow = {
+        id: userId,
+        roll_number: trimmedRoll,
+        full_name: vault.full_name || 'Student',
+        course: vault.course || 'Student',
+        global_target: vault.global_target || 75,
+        password_hash: hash,
+      };
+    }
+
+    const user = {
+      id: userRow.id,
+      roll_number: userRow.roll_number,
+      full_name: userRow.full_name,
+      course: userRow.course,
+      global_target: userRow.global_target || 75,
+    };
+
+    const token = generateToken(user);
+    res.json({
+      token,
+      user,
+      vault_hash: userRow.password_hash,
+      message: 'Logbook session and attendance registers restored successfully!',
+    });
+  } catch (err: any) {
+    console.error('Rehydration error:', err);
+    res.status(500).json({ error: 'Rehydration failed: ' + err.message });
   }
 });
 
@@ -642,6 +798,9 @@ app.post('/api/import', requireAuth, (req: AuthenticatedRequest, res) => {
 // ==========================================
 
 async function startServer() {
+  // Sync existing profiles and data from cloud database (Supabase) if configured
+  await syncFromSupabase();
+
   // Catch-all 404 for unmatched API routes
   app.use('/api', (_req, res) => {
     res.status(404).json({ error: 'API endpoint not found.' });
